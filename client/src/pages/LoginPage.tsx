@@ -24,7 +24,7 @@ const Header = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 70px;
-  gap: 8px; /* ✅ 이미지와 텍스트 사이 간격 */
+  gap: 8px;
 `;
 
 const LogoImg = styled.img`

@@ -105,6 +105,7 @@ const Row = styled.div`
 const Input = styled.input`
   flex: 1;
   padding: 10px;
+  gap: 4px;
   border: 1px solid #ccc;
   border-radius: 4px;
   &:focus {
@@ -131,7 +132,7 @@ const CheckButton = styled.button`
   font-size: 13px;
   background-color: #3cb371;
   color: white;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;

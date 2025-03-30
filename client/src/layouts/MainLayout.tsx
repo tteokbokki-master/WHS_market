@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import Header from './Header';
+import Footer from './Footer';
 
 export default function MainLayout() {
   const location = useLocation();
@@ -8,27 +9,25 @@ export default function MainLayout() {
 
   return (
     <Container>
-      <Inner>
-        {!isAuthPage && <Header />}
+      {!isAuthPage && <Header />}
+      <Content>
         <Outlet />
-      </Inner>
+      </Content>
+      {!isAuthPage && <Footer />}
     </Container>
   );
 }
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const Inner = styled.div`
+const Content = styled.div`
   width: 70%;
   max-width: 1200px;
-  height: 100%;
-  background-color: gray; // 배경 체크할 때
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+  flex: 1;
+  // background-color: gray;
 `;
