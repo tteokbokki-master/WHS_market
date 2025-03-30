@@ -19,17 +19,16 @@ export default function MainLayout() {
 const Container = styled.div`
   width: 100%;
   height: 100vh;
-  background-color: red;
   display: flex;
   justify-content: center;
-  align-items: center;
 `;
 
 const Inner = styled.div`
   width: 70%;
   max-width: 1200px;
   height: 100%;
-  background-color: gray;
+  background-color: gray; // 배경 체크할 때
   display: flex;
+  justify-content: center;
   flex-direction: column;
 `;
