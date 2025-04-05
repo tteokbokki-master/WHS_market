@@ -1,83 +1,16 @@
 import styled from '@emotion/styled';
 import ProductItem from '../Components/ProductItem/ProductItem';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-}
-
-const productList: Product[] = [
-  {
-    id: 1,
-    name: '무선 키보드',
-    price: 29000,
-    imageUrl: 'a',
-  },
-  {
-    id: 2,
-    name: '게이밍 마우스',
-    price: 33000,
-    imageUrl: 'a',
-  },
-  {
-    id: 3,
-    name: '27인치 모니터',
-    price: 189000,
-    imageUrl: 'a',
-  },
-  {
-    id: 4,
-    name: 'USB 허브',
-    price: 12900,
-    imageUrl: 'a',
-  },
-  {
-    id: 5,
-    name: '게이밍 체어',
-    price: 149000,
-    imageUrl: 'ha',
-  },
-  {
-    id: 6,
-    name: '스마트 워치',
-    price: 87000,
-    imageUrl: 'a',
-  },
-  {
-    id: 7,
-    name: '블루투스 스피커',
-    price: 45000,
-    imageUrl: 'a',
-  },
-  {
-    id: 8,
-    name: '태블릿 거치대',
-    price: 9800,
-    imageUrl: 'a',
-  },
-  {
-    id: 9,
-    name: 'C타입 충전기',
-    price: 10900,
-    imageUrl: 'a',
-  },
-  {
-    id: 10,
-    name: '노트북 받침대',
-    price: 23900,
-    imageUrl: 'a',
-  },
-];
+import Container from '../Components/Common/Container';
+import { productList } from '../dummy/Products';
+import Button from '../Components/Common/Button';
 
 export default function Home() {
   return (
-    <Container className="전체 컨테이너">
+    <Container>
       <ProductBox className=" 상품">
         <ProductHeader className=" 상품목록멘트, 등록하기 버튼">
           <Title>상품목록</Title>
-          <RegisterButton>상품 등록하기</RegisterButton>
+          <Button>{'상품 등록하기'}</Button>
         </ProductHeader>
         <ProductList className=" 상품 리스트">
           {productList.map(item => (
@@ -89,15 +22,6 @@ export default function Home() {
     </Container>
   );
 }
-
-const Container = styled.div`
-  flex: 1;
-  // background: red;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  gap: 10px;
-`;
 
 const ProductBox = styled.div`
   flex: 7;
@@ -147,18 +71,4 @@ const Title = styled.p`
   font-weight: bold;
   color: rgb(60, 179, 113);
   margin: 10px;
-`;
-
-const RegisterButton = styled.button`
-  font-size: 16px;
-  padding: 12px 18px;
-  background-color: #3cb371;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: #2e8b57;
-  }
 `;

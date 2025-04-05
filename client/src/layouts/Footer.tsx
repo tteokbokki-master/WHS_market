@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export default function Footer() {
   return (
     <Container>
-      <Title>ㅎㅇ</Title>
+      <Title>WHS-3기-이용진</Title>
     </Container>
   );
 }

@@ -1,9 +1,16 @@
 import styled from '@emotion/styled';
 import Logo from '../../public/logo.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/`);
+  };
+
   return (
-    <Container>
+    <Container onClick={handleClick}>
       <LogoBox>
         <LogoImg src={Logo} alt="logo" draggable="false" />
         <Title>화햇마켓</Title>

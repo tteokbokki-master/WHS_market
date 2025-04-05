@@ -1,21 +1,22 @@
 import styled from '@emotion/styled';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-}
+import { ProductType } from '../../dummy/Products';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductType;
 }
 
 export default function ProductItem({ product }: ProductCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <Image src={product.imageUrl} alt={product.name} />
-      <Name>{product.name}</Name>
+      <Name>{product.title}</Name>
       <Price>{product.price.toLocaleString()}원</Price>
     </Card>
   );
