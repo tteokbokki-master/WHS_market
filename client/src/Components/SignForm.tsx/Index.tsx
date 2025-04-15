@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form';
+import { useCheckUsername, useRegisterUser } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 
 interface UserData {
   username: string;
@@ -19,16 +21,33 @@ export default function SignForm() {
   const password = watch('password');
   const username = watch('username');
 
+  useEffect(() => {
+    checkUsername.reset();
+  }, [username]);
+
+  const checkUsername = useCheckUsername();
+  const registerUser = useRegisterUser();
+
   const onSubmit = (data: UserData) => {
-    alert(`가입 정보: ${JSON.stringify(data, null, 2)}`);
+    if (checkUsername.data === undefined) {
+      alert('아이디 중복 확인을 먼저 해주세요.');
+      return;
+    }
+
+    if (checkUsername.data.isTaken) {
+      alert('이미 사용 중인 아이디입니다.');
+      return;
+    }
+
+    registerUser.mutate({ username: data.username, password: data.password });
   };
 
-  const checkUsername = () => {
+  const handleCheckUsername = () => {
     if (!username || username.trim() === '') {
       alert('아이디를 입력해 주세요.');
       return;
     }
-    alert(`'${username}' 아이디 중복 검사 요청 `); // 백엔드 완성하면 연결하기
+    checkUsername.mutate(username);
   };
 
   return (
@@ -39,8 +58,8 @@ export default function SignForm() {
       <InputGroup>
         <Row>
           <Input placeholder="아이디" {...register('username', { required: '아이디를 입력해 주세요.' })} />
-          <CheckButton type="button" onClick={checkUsername}>
-            중복 확인
+          <CheckButton type="button" onClick={handleCheckUsername} disabled={checkUsername.isPending}>
+            {checkUsername.isPending ? '확인 중...' : '중복 확인'}
           </CheckButton>
         </Row>
         {errors.username && <ErrorText>{errors.username.message}</ErrorText>}
