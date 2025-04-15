@@ -5,17 +5,20 @@ import LoginPage from '../pages/LoginPage';
 import SignPage from '../pages/SignPage';
 import ProductPage from '../pages/ProductPage';
 import Mypage from '../pages/MyPage';
+import RequireAuth from '../Components/RequireAuth';
+
+const withAuth = (element: React.ReactNode) => <RequireAuth>{element}</RequireAuth>;
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: withAuth(<Home />) },
       { path: 'login', element: <LoginPage /> },
       { path: 'signup', element: <SignPage /> },
-      { path: 'product/:productId', element: <ProductPage /> },
-      { path: 'mypage', element: <Mypage /> },
+      { path: 'product/:productId', element: withAuth(<ProductPage />) },
+      { path: 'mypage', element: withAuth(<Mypage />) },
     ],
   },
 ]);

@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useLoginUser } from '../../hooks/useAuth';
 
 interface LoginData {
   username: string;
@@ -14,8 +15,10 @@ export default function LoginForm() {
     formState: { errors },
   } = useForm<LoginData>();
 
+  const loginUser = useLoginUser();
+
   const onSubmit = (data: LoginData) => {
-    alert(`로그인 정보: ${JSON.stringify(data)}`);
+    loginUser.mutate(data);
   };
 
   return (
