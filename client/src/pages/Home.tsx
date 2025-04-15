@@ -3,6 +3,7 @@ import ProductItem from '../Components/ProductItem/ProductItem';
 import Container from '../Components/Common/Container';
 import { productList } from '../dummy/Products';
 import Button from '../Components/Common/Button';
+import BroadCastBox from '../Components/ChatBox';
 
 export default function Home() {
   return (
@@ -18,7 +19,9 @@ export default function Home() {
           ))}
         </ProductList>
       </ProductBox>
-      <ChatBox className=" 전체 채팅"></ChatBox>
+      <ChatBox className=" 전체 채팅">
+        <BroadCastBox />
+      </ChatBox>
     </Container>
   );
 }

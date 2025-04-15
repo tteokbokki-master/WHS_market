@@ -11,4 +11,9 @@ const StyledContainer = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   gap: 10px;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    gap: 100px;
+  }
 `;

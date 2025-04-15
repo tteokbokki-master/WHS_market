@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule, type TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-
+import { ChatGateway } from './chat/chat.gateway';
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
@@ -24,5 +24,6 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     TypeOrmModule.forRootAsync(typeOrmOptions),
     AuthModule,
   ],
+  providers: [ChatGateway],
 })
 export class AppModule {}
