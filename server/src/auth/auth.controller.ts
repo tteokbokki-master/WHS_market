@@ -40,6 +40,16 @@ export class AuthController {
     return { message: '로그인 성공' };
   }
 
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token', {
+      path: '/',
+    });
+
+    return { message: '로그아웃 성공' };
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getProfile(@UserDecorator() user: JwtPayload) {
