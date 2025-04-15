@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import Logo from '../../public/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { useLogoutUser } from '../hooks/useAuth';
 
 export default function Header() {
   const navigate = useNavigate();
-
+  const logout = useLogoutUser();
   const handleLogoClick = () => {
     navigate(`/`);
   };
@@ -21,6 +22,7 @@ export default function Header() {
       </LogoBox>
       <InfoBox>
         <Title onClick={handleMypageClick}>마이페이지</Title>
+        <Title onClick={() => logout.mutate()}>로그아웃</Title>
       </InfoBox>
     </Container>
   );
@@ -60,4 +62,5 @@ const InfoBox = styled.div`
   display: flex;
   justify-content: end;
   padding-bottom: 16px;
+  gap: 20px;
 `;

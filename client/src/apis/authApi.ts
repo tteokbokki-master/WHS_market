@@ -16,3 +16,7 @@ export const loginUserApi = async (data: { username: string; password: string })
   const response = await instance.post('/auth/login', data);
   return response.data;
 };
+
+export const logoutUserApi = async () => {
+  await instance.post('/auth/logout');
+};

@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { checkUsernameApi, registerUserApi, loginUserApi } from '../apis/authApi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { checkUsernameApi, registerUserApi, loginUserApi, logoutUserApi } from '../apis/authApi';
 import { useNavigate } from 'react-router-dom';
 import instance from '../apis/instance';
 
@@ -34,15 +34,33 @@ export const useRegisterUser = () => {
 
 export const useLoginUser = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { username: string; password: string }) => loginUserApi(data),
+    mutationFn: loginUserApi,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['authCheck'] });
       alert('로그인 성공!');
       navigate('/');
     },
     onError: () => {
       alert('로그인 실패. 아이디 또는 비밀번호를 확인하세요.');
+    },
+  });
+};
+
+export const useLogoutUser = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: logoutUserApi,
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['authCheck'] });
+      navigate('/login');
+    },
+    onError: () => {
+      alert('로그아웃 실패. 다시 시도해 주세요.');
     },
   });
 };
