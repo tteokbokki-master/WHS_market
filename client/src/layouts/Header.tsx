@@ -5,18 +5,22 @@ import { useNavigate } from 'react-router-dom';
 export default function Header() {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleLogoClick = () => {
     navigate(`/`);
   };
 
+  const handleMypageClick = () => {
+    navigate(`/mypage`);
+  };
+
   return (
-    <Container onClick={handleClick}>
-      <LogoBox>
+    <Container>
+      <LogoBox onClick={handleLogoClick}>
         <LogoImg src={Logo} alt="logo" draggable="false" />
         <Title>화햇마켓</Title>
       </LogoBox>
       <InfoBox>
-        <Title>마이페이지</Title>
+        <Title onClick={handleMypageClick}>마이페이지</Title>
       </InfoBox>
     </Container>
   );
@@ -38,6 +42,7 @@ const LogoBox = styled.div`
   width: 100%;
   display: flex;
   padding-bottom: 16px;
+  cursor: pointer;
 `;
 const LogoImg = styled.img`
   width: 80px;
@@ -47,6 +52,7 @@ const LogoImg = styled.img`
 const Title = styled.p`
   font-size: 24px;
   font-weight: bold;
+  cursor: pointer;
 `;
 
 const InfoBox = styled.div`

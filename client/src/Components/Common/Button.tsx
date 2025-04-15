@@ -1,8 +1,17 @@
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { ReactNode, MouseEventHandler } from 'react';
 
-export default function Button({ children }: { children: ReactNode }) {
-  return <RegisterButton>{children}</RegisterButton>;
+interface ButtonProps {
+  children: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+
+export default function Button({ children, onClick }: ButtonProps) {
+  return (
+    <RegisterButton onClick={onClick} type="button">
+      {children}
+    </RegisterButton>
+  );
 }
 
 const RegisterButton = styled.button`
