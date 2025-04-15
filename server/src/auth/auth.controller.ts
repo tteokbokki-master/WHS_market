@@ -3,6 +3,9 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { Response } from 'express';
 import { LoginDto } from './dto/login.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard, type JwtPayload } from './jwt/jwt.guard';
+import { User as UserDecorator } from '../user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -35,5 +38,14 @@ export class AuthController {
     });
 
     return { message: '로그인 성공' };
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@UserDecorator() user: JwtPayload) {
+    return {
+      id: user.sub,
+      username: user.username,
+    };
   }
 }
