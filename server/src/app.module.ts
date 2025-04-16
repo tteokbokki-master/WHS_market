@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule, type TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ChatGateway } from './chat/chat.gateway';
+import { ProductModule } from './product/product.module';
+
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
@@ -23,6 +25,7 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmOptions),
     AuthModule,
+    ProductModule,
   ],
   providers: [ChatGateway],
 })
