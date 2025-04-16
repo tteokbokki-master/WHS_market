@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import ProductItem from '../Components/ProductItem/ProductItem';
 import Container from '../Components/Common/Container';
-import { productList } from '../dummy/Products';
 import Button from '../Components/Common/Button';
 import BroadCastBox from '../Components/ChatBox';
+import { useAllProducts } from '../hooks/useProduct';
 
 export default function Home() {
+  const { data: productList, isLoading, isError } = useAllProducts();
   return (
     <Container>
       <ProductBox className=" 상품">
@@ -14,7 +15,9 @@ export default function Home() {
           <Button>{'상품 등록하기'}</Button>
         </ProductHeader>
         <ProductList className=" 상품 리스트">
-          {productList.map(item => (
+          {isLoading && <p>로딩 중...</p>}
+          {isError && <p>상품을 불러오는데 실패했습니다.</p>}
+          {productList?.map(item => (
             <ProductItem key={item.id} product={item} />
           ))}
         </ProductList>

@@ -3,48 +3,42 @@ import styled from '@emotion/styled';
 import Button from '../Components/Common/Button';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-
-const Item = {
-  id: 1,
-  title: '사과팝니다',
-  name: '사과',
-  price: '1000원',
-  description: '달고 맛남',
-  ImageUrl:
-    'https://i.namu.wiki/i/8bVK4ZYAm1S_BeXemaTtE96T3fzGPHO6dC5iFuiWE5fkwffObZEqt8I63YFkIMZIKV5iLJaPSaNh7XH10Ig68g.webp',
-};
+import { useProductDetail } from '../hooks/useProduct';
+import { useState } from 'react';
 
 export default function ProductPage() {
   const { productId } = useParams();
-  console.log(productId);
   const navigate = useNavigate();
+  const { data: item, isLoading, isError } = useProductDetail(Number(productId));
+  const [imgError, setImgError] = useState(false);
 
-  if (!Item) {
-    return <h1>ㅎㅁㅁㅁㅇ</h1>;
-  }
+  if (isLoading) return <h1>불러오는 중...</h1>;
+  if (isError || !item) return <h1>상품을 불러올 수 없습니다.</h1>;
 
   return (
     <Container>
       <Inner>
         <HeaderRow>
           <BackButton onClick={() => navigate(-1)}>← 뒤로</BackButton>
-          <Title>{Item.title}</Title>
+          <Title>{item.title}</Title>
         </HeaderRow>
 
-        <Image src={Item.ImageUrl} />
+        <ImageWrapper>
+          {imgError ? <Fallback /> : <Image src={item.imageUrl} alt={item.name} onError={() => setImgError(true)} />}
+        </ImageWrapper>
 
         <InfoSection>
           <InfoRow>
             <Label>상품명</Label>
-            <Value>{Item.name}</Value>
+            <Value>{item.name}</Value>
           </InfoRow>
           <InfoRow>
             <Label>상품가격</Label>
-            <Value>{Item.price}</Value>
+            <Value>{item.price}</Value>
           </InfoRow>
           <InfoRow>
             <Label>상품 설명</Label>
-            <Value>{Item.description}</Value>
+            <Value>{item.description}</Value>
           </InfoRow>
         </InfoSection>
 
@@ -95,14 +89,14 @@ const Title = styled.h1`
   font-weight: bold;
 `;
 
-const Image = styled.img`
-  width: 50%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
-`;
+// const Image = styled.img`
+//   width: 50%;
+//   height: 400px;
+//   object-fit: cover;
+//   border-radius: 8px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+//   margin-top: 10px;
+// `;
 
 const InfoSection = styled.div`
   width: 50%;
@@ -134,4 +128,29 @@ const ButtonBar = styled.div`
   justify-content: center;
   gap: 20px;
   padding: 10px 0;
+`;
+
+const ImageWrapper = styled.div`
+  width: 50%;
+  height: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const Fallback = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  position: relative;
 `;
