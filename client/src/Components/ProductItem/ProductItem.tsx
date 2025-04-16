@@ -21,7 +21,7 @@ export default function ProductItem({ product }: ProductCardProps) {
       <ImageWrapper>
         {!imgLoaded && <Skeleton />}
         <Image
-          src={imgError ? '/no-image.png' : product.imageUrl}
+          src={imgError ? '/no-image.png' : `http://localhost:8080${product.imageUrl}`}
           alt={product.name}
           onError={() => setImgError(true)}
           onLoad={() => setImgLoaded(true)}

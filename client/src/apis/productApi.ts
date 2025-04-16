@@ -1,13 +1,5 @@
 import instance from './instance';
 
-export interface ProductPayload {
-  title: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-}
-
 export interface ProductResponse {
   id: number;
   title: string;
@@ -18,8 +10,12 @@ export interface ProductResponse {
   userId: number;
 }
 
-export const createProductApi = async (data: ProductPayload) => {
-  const response = await instance.post('/products', data);
+export const createProductApi = async (data: FormData) => {
+  const response = await instance.post('/products', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data as { message: string };
 };
 

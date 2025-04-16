@@ -24,7 +24,11 @@ export default function ProductPage() {
         </HeaderRow>
 
         <ImageWrapper>
-          {imgError ? <Fallback /> : <Image src={item.imageUrl} alt={item.name} onError={() => setImgError(true)} />}
+          {imgError ? (
+            <Fallback />
+          ) : (
+            <Image src={`http://localhost:8080${item.imageUrl}`} alt={item.name} onError={() => setImgError(true)} />
+          )}
         </ImageWrapper>
 
         <InfoSection>
@@ -145,7 +149,7 @@ const ImageWrapper = styled.div`
 const Image = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 `;
 
 const Fallback = styled.div`

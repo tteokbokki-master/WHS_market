@@ -4,25 +4,31 @@ import Container from '../Components/Common/Container';
 import Button from '../Components/Common/Button';
 import BroadCastBox from '../Components/ChatBox';
 import { useAllProducts } from '../hooks/useProduct';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const { data: productList, isLoading, isError } = useAllProducts();
+  const nav = useNavigate();
+  const handleClick = () => {
+    nav('/createProduct');
+  };
   return (
     <Container>
-      <ProductBox className=" 상품">
-        <ProductHeader className=" 상품목록멘트, 등록하기 버튼">
+      <ProductBox>
+        <ProductHeader>
           <Title>상품목록</Title>
-          <Button>{'상품 등록하기'}</Button>
+          <Button onClick={handleClick}>{'상품 등록하기'}</Button>
         </ProductHeader>
-        <ProductList className=" 상품 리스트">
+        <ProductList>
           {isLoading && <p>로딩 중...</p>}
           {isError && <p>상품을 불러오는데 실패했습니다.</p>}
+          {productList?.length === 0 && <EmptyMessage>등록된 상품이 없습니다.</EmptyMessage>}
           {productList?.map(item => (
             <ProductItem key={item.id} product={item} />
           ))}
         </ProductList>
       </ProductBox>
-      <ChatBox className=" 전체 채팅">
+      <ChatBox>
         <BroadCastBox />
       </ChatBox>
     </Container>
@@ -31,7 +37,6 @@ export default function Home() {
 
 const ProductBox = styled.div`
   flex: 7;
-  // background: black;
   height: 100%;
   border-radius: 4px;
   display: flex;
@@ -40,13 +45,11 @@ const ProductBox = styled.div`
 
 const ChatBox = styled.div`
   flex: 3;
-  // background: yellow;
   height: 100%;
   border-radius: 4px;
 `;
 
 const ProductHeader = styled.div`
-  // background: blue;
   flex: 1.5;
   height: 100%;
   display: flex;
@@ -58,7 +61,6 @@ const ProductHeader = styled.div`
 
 const ProductList = styled.div`
   flex: 8.5;
-  // background: skyblue;
   height: 100%;
   display: grid;
   margin-top: 12px;
@@ -77,4 +79,11 @@ const Title = styled.p`
   font-weight: bold;
   color: rgb(60, 179, 113);
   margin: 10px;
+`;
+
+const EmptyMessage = styled.p`
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+  margin: 20px;
 `;
