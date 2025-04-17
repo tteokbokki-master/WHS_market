@@ -8,6 +8,7 @@ export interface ProductResponse {
   price: number;
   imageUrl: string;
   userId: number;
+  username: string;
 }
 
 export const createProductApi = async (data: FormData) => {

@@ -60,12 +60,15 @@ const Wrapper = styled.div`
 `;
 
 const MessageArea = styled.div`
+  border: 2px solid #ddd;
+  border-radius: 4px;
   flex: 1;
   overflow-y: auto;
 `;
 
 const Message = styled.div`
-  margin-bottom: 12px;
+  padding: 10px 0 10px 10px;
+  border-bottom: 1px solid #ddd;
   word-break: break-word;
   font-size: 18px;
 `;

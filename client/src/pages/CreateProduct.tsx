@@ -118,6 +118,7 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding: 10px;
 `;
 
 const Label = styled.label`
@@ -136,6 +137,7 @@ const Textarea = styled.textarea`
   border: 1px solid #ccc;
   border-radius: 6px;
   min-height: 100px;
+  resize: none;
 `;
 
 const Error = styled.span`

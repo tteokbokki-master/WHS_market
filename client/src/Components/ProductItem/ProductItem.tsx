@@ -1,13 +1,17 @@
 import styled from '@emotion/styled';
-import { ProductType } from '../../dummy/Products';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-interface ProductCardProps {
-  product: ProductType;
+interface ProductType {
+  description: string;
+  id: number;
+  imageUrl: string;
+  name: string;
+  price: number;
+  title: string;
 }
 
-export default function ProductItem({ product }: ProductCardProps) {
+export default function ProductItem({ product }: { product: ProductType }) {
   const navigate = useNavigate();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -15,7 +19,7 @@ export default function ProductItem({ product }: ProductCardProps) {
   const handleClick = () => {
     navigate(`/product/${product.id}`);
   };
-
+  console.log(product);
   return (
     <Card onClick={handleClick}>
       <ImageWrapper>

@@ -11,7 +11,6 @@ export default function ProductPage() {
   const navigate = useNavigate();
   const { data: item, isLoading, isError } = useProductDetail(Number(productId));
   const [imgError, setImgError] = useState(false);
-
   if (isLoading) return <h1>불러오는 중...</h1>;
   if (isError || !item) return <h1>상품을 불러올 수 없습니다.</h1>;
 
@@ -32,6 +31,10 @@ export default function ProductPage() {
         </ImageWrapper>
 
         <InfoSection>
+          <InfoRow>
+            <Label>작성자</Label>
+            <Value>{item.username}</Value>
+          </InfoRow>
           <InfoRow>
             <Label>상품명</Label>
             <Value>{item.name}</Value>
@@ -92,15 +95,6 @@ const Title = styled.h1`
   font-size: 24px;
   font-weight: bold;
 `;
-
-// const Image = styled.img`
-//   width: 50%;
-//   height: 400px;
-//   object-fit: cover;
-//   border-radius: 8px;
-//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-//   margin-top: 10px;
-// `;
 
 const InfoSection = styled.div`
   width: 50%;

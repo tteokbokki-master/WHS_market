@@ -62,6 +62,7 @@ const ProductHeader = styled.div`
 const ProductList = styled.div`
   flex: 8.5;
   height: 100%;
+  padding: 10px;
   display: grid;
   margin-top: 12px;
   grid-template-columns: repeat(2, 1fr);
