@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
@@ -54,5 +54,22 @@ export class AuthService {
     });
 
     return token;
+  }
+
+  async updatePassword(userId: number, newPassword: string): Promise<void> {
+    const user = await this.userRepo.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await this.userRepo.save(user);
+  }
+
+  async updateIntroduce(userId: number, introduce: string): Promise<void> {
+    const user = await this.userRepo.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
+
+    user.introduce = introduce;
+    await this.userRepo.save(user);
   }
 }

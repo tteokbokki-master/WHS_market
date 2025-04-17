@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Query, Get, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Query,
+  Get,
+  Res,
+  Put,
+  Req,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { Response } from 'express';
@@ -6,6 +16,10 @@ import { LoginDto } from './dto/login.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard, type JwtPayload } from './jwt/jwt.guard';
 import { User as UserDecorator } from '../user.decorator';
+
+interface AuthenticatedRequest extends Request {
+  user: { sub: number; username: string };
+}
 
 @Controller('auth')
 export class AuthController {
@@ -57,5 +71,43 @@ export class AuthController {
       id: user.sub,
       username: user.username,
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('password')
+  async updatePassword(
+    @Req() req: AuthenticatedRequest,
+    @Body('newPassword') newPassword: string,
+  ) {
+    if (!newPassword || typeof newPassword !== 'string') {
+      throw new BadRequestException('새 비밀번호를 입력해주세요.');
+    }
+
+    const isValid =
+      /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/.test(
+        newPassword,
+      );
+    if (!isValid) {
+      throw new BadRequestException(
+        '비밀번호는 8자 이상이며 특수문자를 포함해야 합니다.',
+      );
+    }
+
+    await this.authService.updatePassword(req.user.sub, newPassword);
+    return { message: '비밀번호가 변경되었습니다.' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('introduce')
+  async updateIntroduce(
+    @Req() req: AuthenticatedRequest,
+    @Body('introduce') introduce: string,
+  ) {
+    if (introduce === undefined || typeof introduce !== 'string') {
+      throw new BadRequestException('자기소개 내용을 입력해주세요.');
+    }
+
+    await this.authService.updateIntroduce(req.user.sub, introduce);
+    return { message: '자기소개가 수정되었습니다.' };
   }
 }

@@ -16,6 +16,9 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({ type: 'text', nullable: true, default: null })
+  introduce: string | null;
+
   @OneToMany(() => Product, (product) => product.user)
   products: Product[];
 }
