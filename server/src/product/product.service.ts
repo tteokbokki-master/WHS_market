@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { User } from '../auth/entities/user/user';
 
@@ -86,5 +86,13 @@ export class ProductService {
 
     await this.productRepo.delete(id);
     return { message: '상품이 삭제되었습니다.' };
+  }
+
+  async searchProducts(query: string) {
+    return this.productRepo.find({
+      where: {
+        title: ILike(`%${query}%`),
+      },
+    });
   }
 }

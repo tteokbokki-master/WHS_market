@@ -10,6 +10,7 @@ import {
   NotFoundException,
   UseInterceptors,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { diskStorage } from 'multer';
@@ -60,6 +61,11 @@ export class ProductController {
   @Get('/my-products')
   async getMyProducts(@Req() req: AuthenticatedRequest) {
     return this.productService.findMyProducts(req.user.sub);
+  }
+
+  @Get('/search')
+  async searchProducts(@Query('q') query: string) {
+    return this.productService.searchProducts(query);
   }
 
   @Get(':id')
