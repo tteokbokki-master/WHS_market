@@ -8,10 +8,11 @@ import { ProductReportController } from './product-report.controller';
 import { UserReportController } from './user-report.controller';
 import { User } from '../auth/entities/user/user';
 import { Product } from '../product/entities/product.entity';
+import { Chat } from 'src/user-chat/entities/chat.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProductReport, User, Product]),
+    TypeOrmModule.forFeature([ProductReport, User, Product, Chat]),
     TypeOrmModule.forFeature([UserReport, User]),
   ],
   controllers: [ProductReportController, UserReportController],

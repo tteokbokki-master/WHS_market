@@ -9,16 +9,22 @@ import { ProductReport } from './entities/product_report';
 import { User } from '../auth/entities/user/user';
 import { Product } from '../product/entities/product.entity';
 import { CreateProductReportDto } from './dto/create-product-report.dto';
+import { Chat } from '../user-chat/entities/chat.entity';
 
 @Injectable()
 export class ProductReportService {
   constructor(
     @InjectRepository(ProductReport)
     private readonly repo: Repository<ProductReport>,
+
     @InjectRepository(User)
     private readonly users: Repository<User>,
+
     @InjectRepository(Product)
     private readonly products: Repository<Product>,
+
+    @InjectRepository(Chat)
+    private readonly chats: Repository<Chat>,
   ) {}
 
   async create(
@@ -47,6 +53,19 @@ export class ProductReportService {
       product,
     });
     await this.repo.save(entity);
+
+    const reportCount = await this.repo.count({
+      where: { product: { id: dto.productId } },
+    });
+
+    if (reportCount >= 5) {
+      await this.chats.delete({ product: { id: dto.productId } });
+
+      await this.repo.delete({ product: { id: dto.productId } });
+
+      await this.products.delete({ id: dto.productId });
+    }
+
     return 'REPORTED';
   }
 }
