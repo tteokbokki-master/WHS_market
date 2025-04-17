@@ -8,4 +8,8 @@ export class CreateReportDto {
   @IsNotEmpty()
   @IsNumber()
   reportedUserId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  productId: number;
 }

@@ -9,6 +9,9 @@ export class Report {
   @Column('text')
   content: string;
 
+  @Column()
+  productId: number;
+
   @ManyToOne(() => User)
   reporter: User;
 

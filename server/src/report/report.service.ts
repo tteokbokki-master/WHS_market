@@ -23,6 +23,7 @@ export class ReportService {
       content: dto.content,
       reporter,
       reported,
+      productId: dto.productId,
     });
 
     return this.reportRepo.save(report);
