@@ -20,16 +20,29 @@ export class ProductReportService {
   async create(
     userId: number,
     dto: CreateProductReportDto,
-  ): Promise<ProductReport> {
+  ): Promise<'ALREADY_REPORTED' | 'REPORTED'> {
     const reporter = await this.users.findOneBy({ id: userId });
     const product = await this.products.findOneBy({ id: dto.productId });
-    if (!reporter || !product)
+
+    if (!reporter || !product) {
       throw new BadRequestException('잘못된 요청입니다');
+    }
+
+    const exists = await this.repo.findOne({
+      where: {
+        reporter: { id: userId },
+        product: { id: dto.productId },
+      },
+    });
+
+    if (exists) return 'ALREADY_REPORTED';
+
     const entity = this.repo.create({
       content: dto.content,
       reporter,
       product,
     });
-    return this.repo.save(entity);
+    await this.repo.save(entity);
+    return 'REPORTED';
   }
 }

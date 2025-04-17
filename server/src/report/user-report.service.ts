@@ -14,16 +14,33 @@ export class UserReportService {
     private readonly users: Repository<User>,
   ) {}
 
-  async create(userId: number, dto: CreateUserReportDto): Promise<UserReport> {
+  async create(
+    userId: number,
+    dto: CreateUserReportDto,
+  ): Promise<'ALREADY_REPORTED' | 'REPORTED'> {
     const reporter = await this.users.findOneBy({ id: userId });
     const reported = await this.users.findOneBy({ id: dto.reportedUserId });
-    if (!reporter || !reported)
+
+    if (!reporter || !reported) {
       throw new BadRequestException('잘못된 요청입니다');
+    }
+
+    const exists = await this.repo.findOne({
+      where: {
+        reporter: { id: userId },
+        reported: { id: dto.reportedUserId },
+      },
+    });
+
+    if (exists) return 'ALREADY_REPORTED';
+
     const entity = this.repo.create({
       content: dto.content,
       reporter,
       reported,
     });
-    return this.repo.save(entity);
+
+    await this.repo.save(entity);
+    return 'REPORTED';
   }
 }

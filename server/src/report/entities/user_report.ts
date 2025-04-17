@@ -4,9 +4,11 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  Unique,
 } from 'typeorm';
 import { User } from '../../auth/entities/user/user';
 
+Unique(['reporter', 'reported']);
 @Entity('user_report')
 export class UserReport {
   @PrimaryGeneratedColumn()
