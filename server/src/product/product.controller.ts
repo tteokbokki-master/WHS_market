@@ -55,6 +55,11 @@ export class ProductController {
   findAll() {
     return this.productService.findAll();
   }
+  @UseGuards(JwtAuthGuard)
+  @Get('/my-products')
+  async getMyProducts(@Req() req: AuthenticatedRequest) {
+    return this.productService.findMyProducts(req.user.sub);
+  }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {

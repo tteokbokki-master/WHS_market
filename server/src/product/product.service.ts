@@ -64,4 +64,10 @@ export class ProductService {
       username: product.user.username,
     };
   }
+
+  async findMyProducts(userId: number): Promise<Product[]> {
+    return this.productRepo.find({
+      where: { user: { id: userId } },
+    });
+  }
 }
