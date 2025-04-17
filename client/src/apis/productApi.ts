@@ -43,3 +43,8 @@ export const deleteProductApi = async (id: number) => {
   });
   return response.data;
 };
+
+export const searchProductApi = async (query: string) => {
+  const response = await instance.get(`/products/search?q=${encodeURIComponent(query)}`);
+  return response.data;
+};

@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import {
   createProductApi,
   deleteProductApi,
   fetchAllProductsApi,
   fetchMyProductsApi,
   fetchProductByIdApi,
+  searchProductApi,
 } from '../apis/productApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -59,3 +61,10 @@ export const useDeleteProduct = () => {
     },
   });
 };
+
+export const useSearchProduct = (query: string) =>
+  useQuery({
+    queryKey: ['searchProduct', query],
+    queryFn: () => searchProductApi(query),
+    enabled: !!query,
+  });
