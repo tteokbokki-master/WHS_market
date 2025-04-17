@@ -1,40 +1,43 @@
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
-import { useReport } from '../hooks/useReport';
-import Button from './Common/Button';
+import { useProductReport, useUserReport } from '../hooks/useReport';
 
+import Button from './Common/Button';
 interface ReportModalProps {
+  type: 'product' | 'user';
+  productId?: number;
+  reportedUserId?: number;
+  username?: string;
   onClose: () => void;
-  reportedUserId: number;
-  productId: number;
-  username: string;
 }
 
 interface ReportForm {
   content: string;
 }
 
-export default function ReportModal({ onClose, reportedUserId, productId, username }: ReportModalProps) {
+export default function ReportModal({ type, onClose, reportedUserId, productId, username }: ReportModalProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ReportForm>();
-  const { mutate } = useReport();
+
+  const productReport = useProductReport();
+  const userReport = useUserReport();
 
   const onSubmit = (data: ReportForm) => {
-    mutate({
-      reportedUserId,
-      productId,
-      content: data.content,
-    });
+    if (type === 'product' && productId) {
+      productReport.mutate({ productId, content: data.content });
+    } else if (type === 'user' && reportedUserId) {
+      userReport.mutate({ reportedUserId, content: data.content });
+    }
     onClose();
   };
 
   return (
     <Overlay>
       <ModalBox>
-        <Title>{`작성자 '${username}' 신고`}</Title>
+        <Title>{type === 'product' ? '이 상품을 신고하시겠습니까?' : `작성자 '${username}' 신고`}</Title>
         <Form>
           <Label>신고 사유</Label>
           <Textarea
@@ -49,7 +52,6 @@ export default function ReportModal({ onClose, reportedUserId, productId, userna
     </Overlay>
   );
 }
-
 const Overlay = styled.div`
   position: fixed;
   top: 0;

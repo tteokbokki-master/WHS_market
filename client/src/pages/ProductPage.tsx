@@ -17,6 +17,7 @@ export default function ProductPage() {
   const { data: me } = useAuth();
   const [imgError, setImgError] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isUserReportOpen, setIsUserReportOpen] = useState(false);
 
   const [mode, setMode] = useState<'none' | 'rooms' | 'chat'>('none');
   const [selectedRoom, setSelectedRoom] = useState<{ userId: number; username: string } | null>(null);
@@ -29,6 +30,8 @@ export default function ProductPage() {
 
   const openReport = () => setIsReportOpen(true);
   const closeReport = () => setIsReportOpen(false);
+  const openUserReport = () => setIsUserReportOpen(true);
+  const closeUserReport = () => setIsUserReportOpen(false);
 
   const openRooms = () => setMode('rooms');
   const openChat = () => {
@@ -76,7 +79,12 @@ export default function ProductPage() {
         </InfoSection>
 
         <ButtonBar>
-          <Button onClick={openReport}>불량유저 신고</Button>
+          {!isOwner && (
+            <>
+              <Button onClick={openUserReport}>유저 신고</Button>
+              <Button onClick={openReport}>불량 상품 신고</Button>
+            </>
+          )}
           {isOwner ? (
             <Button onClick={openRooms}>채팅 목록 보기</Button>
           ) : (
@@ -105,14 +113,8 @@ export default function ProductPage() {
           />
         )}
 
-        {isReportOpen && (
-          <ReportModal
-            onClose={closeReport}
-            reportedUserId={item.userId}
-            productId={item.id}
-            username={item.username}
-          />
-        )}
+        {isReportOpen && <ReportModal type="product" productId={item.id} onClose={closeReport} />}
+        {isUserReportOpen && <ReportModal type="user" productId={item.id} onClose={closeUserReport} />}
       </Inner>
     </CustomContainer>
   );

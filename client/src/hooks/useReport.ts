@@ -1,13 +1,29 @@
 import { useMutation } from '@tanstack/react-query';
-import { createReportApi, CreateReportPayload } from '../apis/reportApi';
+import {
+  createProductReportApi,
+  createUserReportApi,
+  CreateProductReportPayload,
+  CreateUserReportPayload,
+} from '../apis/reportApi';
 
-export const useReport = () =>
+export const useProductReport = () =>
   useMutation({
-    mutationFn: (data: CreateReportPayload) => createReportApi(data),
+    mutationFn: (data: CreateProductReportPayload) => createProductReportApi(data),
     onSuccess: () => {
-      alert('신고가 정상적으로 접수되었습니다.');
+      alert('상품 신고가 정상적으로 접수되었습니다.');
     },
     onError: () => {
-      alert('신고 접수에 실패했습니다. 다시 시도해주세요.');
+      alert('상품 신고에 실패했습니다. 다시 시도해주세요.');
+    },
+  });
+
+export const useUserReport = () =>
+  useMutation({
+    mutationFn: (data: CreateUserReportPayload) => createUserReportApi(data),
+    onSuccess: () => {
+      alert('유저 신고가 정상적으로 접수되었습니다.');
+    },
+    onError: () => {
+      alert('유저 신고에 실패했습니다. 다시 시도해주세요.');
     },
   });
