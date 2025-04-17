@@ -19,7 +19,6 @@ export default function ProductItem({ product }: { product: ProductType }) {
   const handleClick = () => {
     navigate(`/product/${product.id}`);
   };
-  console.log(product);
   return (
     <Card onClick={handleClick}>
       <ImageWrapper>

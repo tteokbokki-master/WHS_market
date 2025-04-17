@@ -1,18 +1,23 @@
 import Container from '../Components/Common/Container';
 import styled from '@emotion/styled';
 import Button from '../Components/Common/Button';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useProductDetail } from '../hooks/useProduct';
 import { useState } from 'react';
+import ReportModal from '../Components/ReportModal';
 
 export default function ProductPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { data: item, isLoading, isError } = useProductDetail(Number(productId));
   const [imgError, setImgError] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+
   if (isLoading) return <h1>불러오는 중...</h1>;
   if (isError || !item) return <h1>상품을 불러올 수 없습니다.</h1>;
+
+  const openReport = () => setIsReportOpen(true); // ✅ 열기
+  const closeReport = () => setIsReportOpen(false); // ✅ 닫기
 
   return (
     <Container>
@@ -50,9 +55,17 @@ export default function ProductPage() {
         </InfoSection>
 
         <ButtonBar>
-          <Button>불량유저 신고</Button>
+          <Button onClick={openReport}>불량유저 신고</Button>
           <Button>1대1 채팅</Button>
         </ButtonBar>
+        {isReportOpen && (
+          <ReportModal
+            onClose={closeReport}
+            reportedUserId={item.userId}
+            productId={item.id}
+            username={item.username}
+          />
+        )}
       </Inner>
     </Container>
   );

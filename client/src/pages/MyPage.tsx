@@ -32,7 +32,7 @@ export default function Mypage() {
   return (
     <MypageContainer>
       <MyPageHeader>
-        <MainTitle>마이페이지</MainTitle>
+        <MainTitle>'{user.username}'님의 마이페이지</MainTitle>
       </MyPageHeader>
 
       <Introduce>
