@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductReport } from './entities/product_report';
@@ -35,7 +39,7 @@ export class ProductReportService {
       },
     });
 
-    if (exists) return 'ALREADY_REPORTED';
+    if (exists) throw new ConflictException('ALREADY_REPORTED');
 
     const entity = this.repo.create({
       content: dto.content,

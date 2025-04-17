@@ -32,7 +32,6 @@ export default function ProductPage() {
   const closeReport = () => setIsReportOpen(false);
   const openUserReport = () => setIsUserReportOpen(true);
   const closeUserReport = () => setIsUserReportOpen(false);
-
   const openRooms = () => setMode('rooms');
   const openChat = () => {
     setSelectedRoom({ userId: item.userId, username: item.username });
@@ -50,7 +49,6 @@ export default function ProductPage() {
           <BackButton onClick={() => navigate(-1)}>← 뒤로</BackButton>
           <Title>{item.title}</Title>
         </HeaderRow>
-
         <ImageWrapper>
           {imgError ? (
             <Fallback />
@@ -77,7 +75,6 @@ export default function ProductPage() {
             <Value>{item.description}</Value>
           </InfoRow>
         </InfoSection>
-
         <ButtonBar>
           {!isOwner && (
             <>
@@ -91,7 +88,6 @@ export default function ProductPage() {
             <Button onClick={openChat}>1대1 채팅</Button>
           )}
         </ButtonBar>
-
         {mode === 'rooms' && (
           <ChatRoomsList
             productId={pid}
@@ -102,7 +98,6 @@ export default function ProductPage() {
             onClose={closeAll}
           />
         )}
-
         {mode === 'chat' && selectedRoom && (
           <ChatSideBox
             onClose={closeAll}
@@ -112,9 +107,10 @@ export default function ProductPage() {
             productId={pid}
           />
         )}
-
         {isReportOpen && <ReportModal type="product" productId={item.id} onClose={closeReport} />}
-        {isUserReportOpen && <ReportModal type="user" productId={item.id} onClose={closeUserReport} />}
+        {isUserReportOpen && (
+          <ReportModal type="user" username={item.username} reportedUserId={item.userId} onClose={closeUserReport} />
+        )}
       </Inner>
     </CustomContainer>
   );

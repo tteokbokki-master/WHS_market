@@ -5,6 +5,7 @@ import {
   CreateProductReportPayload,
   CreateUserReportPayload,
 } from '../apis/reportApi';
+import { AxiosError } from 'axios';
 
 export const useProductReport = () =>
   useMutation({
@@ -12,8 +13,12 @@ export const useProductReport = () =>
     onSuccess: () => {
       alert('상품 신고가 정상적으로 접수되었습니다.');
     },
-    onError: () => {
-      alert('상품 신고에 실패했습니다. 다시 시도해주세요.');
+    onError: (error: AxiosError<{ message: string }>) => {
+      if (error.response?.data?.message === 'ALREADY_REPORTED') {
+        alert('이미 해당 상품을 신고하였습니다.');
+      } else {
+        alert('상품 신고에 실패했습니다. 다시 시도해주세요.');
+      }
     },
   });
 
@@ -23,7 +28,11 @@ export const useUserReport = () =>
     onSuccess: () => {
       alert('유저 신고가 정상적으로 접수되었습니다.');
     },
-    onError: () => {
-      alert('유저 신고에 실패했습니다. 다시 시도해주세요.');
+    onError: (error: AxiosError<{ message: string }>) => {
+      if (error.response?.data?.message === 'ALREADY_REPORTED') {
+        alert('이미 해당 유저를 신고하였습니다.');
+      } else {
+        alert('유저 신고에 실패했습니다. 다시 시도해주세요.');
+      }
     },
   });
