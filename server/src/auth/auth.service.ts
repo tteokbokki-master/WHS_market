@@ -7,11 +7,13 @@ import { User } from './entities/user/user';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
+import { Wallet } from '../wallet/entities/wallet.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Wallet) private readonly walletRepo: Repository<Wallet>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -30,7 +32,13 @@ export class AuthService {
       password: hashedPw,
     });
 
-    await this.userRepo.save(user);
+    const savedUser = await this.userRepo.save(user);
+
+    const wallet = this.walletRepo.create({
+      user: savedUser,
+      balance: 100000,
+    });
+    await this.walletRepo.save(wallet);
 
     return {
       message: '회원가입 성공',

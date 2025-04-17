@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 
 import { Product } from '../../../product/entities/product.entity';
 import { OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Wallet } from 'src/wallet/entities/wallet.entity';
 
 @Entity()
 export class User {
@@ -24,4 +25,7 @@ export class User {
 
   @OneToMany(() => Product, (product) => product.user)
   products: Product[];
+
+  @OneToOne(() => Wallet, (wallet) => wallet.user, { cascade: true })
+  wallet: Wallet;
 }

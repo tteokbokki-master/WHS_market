@@ -7,6 +7,7 @@ import { PrivateChatGateway } from './chat/private-chat.gateway';
 import { ProductModule } from './product/product.module';
 import { ReportModule } from './report/report.module';
 import { ChatModule } from './user-chat/user-chat.module';
+import { WalletModule } from './wallet/wallet.module';
 
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -31,6 +32,7 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     ProductModule,
     ReportModule,
     ChatModule,
+    WalletModule,
   ],
   providers: [GlobalChatGateway, PrivateChatGateway],
 })

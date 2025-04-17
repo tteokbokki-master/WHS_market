@@ -12,7 +12,7 @@ export class Wallet {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.wallet, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 

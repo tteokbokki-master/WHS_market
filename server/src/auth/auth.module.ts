@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user/user';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Wallet } from '../wallet/entities/wallet.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Wallet]),
     JwtModule.registerAsync({
       global: true,
       inject: [ConfigService],
