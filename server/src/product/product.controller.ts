@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
-import { StorageEngine, diskStorage } from 'multer';
+import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
@@ -32,7 +32,7 @@ const storage = diskStorage({
     const finalName = `${uniqueName}${ext}`;
     cb(null, finalName);
   },
-}) as StorageEngine;
+});
 
 @Controller('products')
 export class ProductController {

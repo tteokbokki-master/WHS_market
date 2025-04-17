@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 interface ChatMessage {
   username: string;
   message: string;
+  roomId: string;
 }
 
 interface JwtPayload {
@@ -27,9 +28,7 @@ interface JwtPayload {
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
-
-  private messages: ChatMessage[] = [];
-  private clients = new Map<string, string>();
+  private clients = new Map<string, { username: string; userId: number }>();
 
   constructor(private readonly jwtService: JwtService) {}
 
@@ -43,40 +42,41 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
-      this.clients.set(client.id, payload.username);
+      this.clients.set(client.id, {
+        username: payload.username,
+        userId: payload.sub,
+      });
 
-      client.emit('chat init', this.messages);
-    } catch (err) {
-      console.warn('[서버] JWT 인증 실패:', err.message);
+      console.log(`[서버] ${payload.username} 접속 (${client.id})`);
+    } catch {
       client.disconnect();
     }
   }
 
-  @SubscribeMessage('chat message')
-  handleMessage(...args: unknown[]) {
-    const [client, message] = args as [Socket, string];
+  @SubscribeMessage('join_private')
+  handleJoinRoom(client: Socket, payload: { roomId: string }) {
+    client.join(payload.roomId);
+    console.log(`[JOIN] ${client.id} joined ${payload.roomId}`);
+  }
 
-    if (!client || typeof message !== 'string') {
-      console.warn('[서버] client 또는 message 데이터 없음');
-      return;
-    }
+  @SubscribeMessage('private_message')
+  handlePrivateMessage(
+    client: Socket,
+    payload: { roomId: string; message: string },
+  ) {
+    const user = this.clients.get(client.id);
+    if (!user) return;
 
-    const username = this.clients.get(client.id);
+    const chat: ChatMessage = {
+      username: user.username,
+      message: payload.message,
+      roomId: payload.roomId,
+    };
 
-    if (!username) {
-      return;
-    }
-
-    const chat: ChatMessage = { username, message };
-    this.messages.push(chat);
-    this.server.emit('chat message', chat);
+    this.server.to(payload.roomId).emit('private_message', chat);
   }
 
   handleDisconnect(client: Socket) {
-    const username = this.clients.get(client.id);
-    if (username) {
-      console.log(` ${username} (${client.id}) 연결 종료`);
-    }
     this.clients.delete(client.id);
   }
 

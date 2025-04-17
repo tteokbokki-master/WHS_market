@@ -5,6 +5,7 @@ import { TypeOrmModule, type TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ChatGateway } from './chat/chat.gateway';
 import { ProductModule } from './product/product.module';
 import { ReportModule } from './report/report.module';
+import { ChatModule } from './user-chat/user-chat.module';
 
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -28,6 +29,7 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     AuthModule,
     ProductModule,
     ReportModule,
+    ChatModule,
   ],
   providers: [ChatGateway],
 })
