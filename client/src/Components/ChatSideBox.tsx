@@ -4,6 +4,9 @@ import { useSocket } from '../hooks/useSocket';
 import { useChatHistory, useCreateChat } from '../hooks/useChatHistory';
 import { useAuth } from '../hooks/useAuth';
 import Button from './Common/Button';
+import { useTransfer } from '../hooks/useWallet';
+import { AxiosError } from 'axios';
+import { useWalletBalance } from '../hooks/useWallet';
 
 interface ChatSideBoxProps {
   onClose: () => void;
@@ -17,10 +20,13 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
   const socketRef = useSocket();
   const { data: history } = useChatHistory(receiverId, productId);
   const { mutate } = useCreateChat();
+  const { data: me } = useAuth();
+  const { data: wallet, refetch: refetchBalance } = useWalletBalance();
 
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState('');
-  const { data: me } = useAuth();
+  const [isTransferMode, setIsTransferMode] = useState(false);
+  const [transferAmount, setTransferAmount] = useState('');
 
   useEffect(() => {
     if (!socketRef.current) return;
@@ -41,7 +47,7 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
     const formatted = history.map(h => `${h.sender.username}: ${h.message}`);
     setMessages(formatted);
   }, [history]);
-
+  const { mutate: transferMoney } = useTransfer();
   const handleSend = () => {
     if (!input.trim() || !socketRef.current) return;
 
@@ -52,9 +58,45 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
       productId,
     });
 
-    mutate({ receiverId: Number(receiverId), productId: Number(productId), message: input });
-
+    mutate({ receiverId, productId, message: input });
     setInput('');
+  };
+
+  const handleTransfer = () => {
+    const amount = parseInt(transferAmount, 10);
+    if (!amount || amount <= 0) {
+      alert('올바른 금액을 입력하세요.');
+      return;
+    }
+
+    transferMoney(
+      { receiverId, amount },
+      {
+        onSuccess: () => {
+          alert(`${amount}원이 ${username}님에게 송금되었습니다.`);
+          setTransferAmount('');
+          setIsTransferMode(false);
+          refetchBalance();
+          const message = `[송금] ${amount}원을 송금했습니다.`;
+          if (socketRef.current) {
+            socketRef.current.emit('private_message', {
+              roomId,
+              message,
+              receiverId,
+              productId,
+            });
+          }
+          mutate({ receiverId, productId, message });
+        },
+        onError: (error: Error) => {
+          if (error instanceof AxiosError && error.response?.data?.message) {
+            alert(error.response.data.message as string);
+          } else {
+            alert('송금에 실패했습니다.');
+          }
+        },
+      }
+    );
   };
 
   return (
@@ -63,6 +105,7 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
         <Title>'{username}'님과의 대화</Title>
         <CloseButton onClick={onClose}>×</CloseButton>
       </Header>
+
       <ChatBody>
         {messages.map((m, idx) => {
           const [sender, ...rest] = m.split(': ');
@@ -75,36 +118,41 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
           );
         })}
       </ChatBody>
-      <InputArea>
-        <ChatInput
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          placeholder="메시지를 입력하세요"
-        />
-        <Button onClick={handleSend}>전송</Button>
-      </InputArea>
+
+      <TopBar>
+        <Balance>잔액: {wallet.balance.toLocaleString()}원</Balance>
+        <Button onClick={() => setIsTransferMode(prev => !prev)}>송금</Button>
+      </TopBar>
+
+      {isTransferMode ? (
+        <InputArea>
+          <ChatInput
+            value={transferAmount}
+            onChange={e => setTransferAmount(e.target.value)}
+            placeholder="송금할 금액 입력"
+            type="number"
+          />
+          <Button onClick={handleTransfer}>보내기</Button>
+        </InputArea>
+      ) : (
+        <InputArea>
+          <ChatInput
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="메시지를 입력하세요"
+          />
+          <Button onClick={handleSend}>전송</Button>
+        </InputArea>
+      )}
     </Wrapper>
   );
 }
-
-const Message = styled.div<{ isMine: boolean }>`
-  background: red;
-  max-width: 80%;
-  margin: 6px 0;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background-color: ${({ isMine }) => (isMine ? '#3cb371' : '#f0f0f0')};
-  color: ${({ isMine }) => (isMine ? 'white' : 'black')};
-  text-align: ${({ isMine }) => (isMine ? 'end' : 'start')};
-  word-break: break-word;
-  align-self: ${({ isMine }) => (isMine ? 'flex-end' : 'flex-start')};
-`;
 
 const Wrapper = styled.div`
   position: absolute;
@@ -129,6 +177,13 @@ const Header = styled.div`
   align-items: center;
 `;
 
+const Title = styled.p`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+`;
+
 const CloseButton = styled.button`
   background: none;
   border: none;
@@ -143,6 +198,14 @@ const ChatBody = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+`;
+
+const TopBar = styled.div`
+  padding: 8px 12px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  background-color: #fafafa;
 `;
 
 const InputArea = styled.div`
@@ -160,9 +223,20 @@ const ChatInput = styled.input`
   margin-right: 5px;
 `;
 
-const Title = styled.p`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+const Message = styled.div<{ isMine: boolean }>`
+  max-width: 80%;
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background-color: ${({ isMine }) => (isMine ? '#3cb371' : '#f0f0f0')};
+  color: ${({ isMine }) => (isMine ? 'white' : 'black')};
+  text-align: ${({ isMine }) => (isMine ? 'end' : 'start')};
+  word-break: break-word;
+  align-self: ${({ isMine }) => (isMine ? 'flex-end' : 'flex-start')};
+`;
+
+const Balance = styled.p`
+  font-size: 18px;
   font-weight: bold;
+  color: #3cb371;
 `;

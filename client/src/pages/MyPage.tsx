@@ -5,6 +5,7 @@ import { useUpdateIntroduce, useUpdatePassword } from '../hooks/useAuth';
 import { useAuth } from '../hooks/useAuth';
 import { useDeleteProduct, useMyProducts } from '../hooks/useProduct';
 import { useNavigate } from 'react-router-dom';
+import { useWalletBalance } from '../hooks/useWallet';
 
 interface FormValues {
   introduce: string;
@@ -34,6 +35,7 @@ export default function Mypage() {
 
   const { data: myProducts = [], refetch } = useMyProducts();
   const { mutate: deleteProduct } = useDeleteProduct();
+  const { data: wallet } = useWalletBalance();
 
   const handleDelete = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
@@ -48,6 +50,7 @@ export default function Mypage() {
     <MypageContainer>
       <MyPageHeader>
         <MainTitle>'{user.username}'님의 마이페이지</MainTitle>
+        {wallet && <Balance>잔액: {wallet.balance.toLocaleString()}원</Balance>}
       </MyPageHeader>
 
       <ProductSection>
@@ -215,4 +218,10 @@ const SmallButton = styled.button`
   &:hover {
     background-color: #2e8b57;
   }
+`;
+
+const Balance = styled.p`
+  font-size: 18px;
+  font-weight: bold;
+  color: #3cb371;
 `;
