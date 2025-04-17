@@ -8,6 +8,8 @@ import {
   Put,
   Req,
   BadRequestException,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -19,6 +21,10 @@ import { User as UserDecorator } from '../user.decorator';
 
 interface AuthenticatedRequest extends Request {
   user: { sub: number; username: string };
+}
+
+interface InfoMe extends JwtPayload {
+  introduce: string;
 }
 
 @Controller('auth')
@@ -66,10 +72,11 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@UserDecorator() user: JwtPayload) {
+  getProfile(@UserDecorator() user: InfoMe) {
     return {
       id: user.sub,
       username: user.username,
+      introduce: user.introduce,
     };
   }
 
@@ -109,5 +116,10 @@ export class AuthController {
 
     await this.authService.updateIntroduce(req.user.sub, introduce);
     return { message: '자기소개가 수정되었습니다.' };
+  }
+
+  @Get('profile/:id')
+  async getUserProfile(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.getPublicProfile(id);
   }
 }

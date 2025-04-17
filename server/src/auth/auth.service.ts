@@ -72,4 +72,17 @@ export class AuthService {
     user.introduce = introduce;
     await this.userRepo.save(user);
   }
+
+  async getPublicProfile(
+    userId: number,
+  ): Promise<{ username: string; introduce: string | null }> {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      select: ['username', 'introduce'],
+    });
+
+    if (!user) throw new NotFoundException('해당 유저를 찾을 수 없습니다.');
+
+    return user;
+  }
 }
