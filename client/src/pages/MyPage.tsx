@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import Button from '../Components/Common/Button';
 import { useUpdateIntroduce, useUpdatePassword } from '../hooks/useAuth';
 import { useAuth } from '../hooks/useAuth';
+import { useDeleteProduct, useMyProducts } from '../hooks/useProduct';
+import { useNavigate } from 'react-router-dom';
 
 interface FormValues {
   introduce: string;
@@ -10,6 +12,7 @@ interface FormValues {
 }
 
 export default function Mypage() {
+  const nav = useNavigate();
   const {
     register,
     handleSubmit,
@@ -29,11 +32,33 @@ export default function Mypage() {
     updatePassword(data.password);
   });
 
+  const { data: myProducts = [], refetch } = useMyProducts();
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  const handleDelete = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    if (confirm('정말 삭제하시겠습니까?')) {
+      deleteProduct(id, {
+        onSuccess: () => refetch(),
+      });
+    }
+  };
+
   return (
     <MypageContainer>
       <MyPageHeader>
         <MainTitle>'{user.username}'님의 마이페이지</MainTitle>
       </MyPageHeader>
+
+      <ProductSection>
+        <SubTitle>내 상품 목록</SubTitle>
+        {myProducts.map(product => (
+          <ProductItem key={product.id} onClick={() => nav(`/product/${product.id}`)}>
+            <P1>{product.title}</P1>
+            <SmallButton onClick={e => handleDelete(e, product.id)}>삭제</SmallButton>
+          </ProductItem>
+        ))}
+      </ProductSection>
 
       <Introduce>
         <SubTitle>소개</SubTitle>
@@ -47,7 +72,7 @@ export default function Mypage() {
         <SubTitle>비밀번호 수정</SubTitle>
         <InlineBox>
           <Input
-            placeholder="비밀번호"
+            placeholder="비밀번호 수정"
             type="password"
             {...register('password', {
               required: '비밀번호를 입력해 주세요.',
@@ -141,4 +166,53 @@ const SubTitle = styled.p`
   font-weight: bold;
   color: #000;
   margin: 10px 0;
+  align-self: start;
+`;
+
+const ProductSection = styled.div`
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ProductItem = styled.div`
+  width: 80%;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const P1 = styled.p`
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  color: #2c3e50;
+  font-weight: 500;
+`;
+
+const SmallButton = styled.button`
+  font-size: 16px;
+  padding: 6px;
+  margin: 6px;
+  background-color: #3cb371;
+  color: white;
+
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: #2e8b57;
+  }
 `;

@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProductApi, fetchAllProductsApi, fetchProductByIdApi } from '../apis/productApi';
+import {
+  createProductApi,
+  deleteProductApi,
+  fetchAllProductsApi,
+  fetchMyProductsApi,
+  fetchProductByIdApi,
+} from '../apis/productApi';
 import { useNavigate } from 'react-router-dom';
 
 export const useCreateProduct = () => {
@@ -31,3 +37,25 @@ export const useProductDetail = (id: number) =>
     queryFn: () => fetchProductByIdApi(id),
     enabled: !!id,
   });
+
+export const useMyProducts = () => {
+  return useQuery({
+    queryKey: ['myProducts'],
+    queryFn: fetchMyProductsApi,
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteProductApi(id),
+    onSuccess: () => {
+      alert('상품이 성공적으로 삭제되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['myProducts'] });
+    },
+    onError: () => {
+      alert('상품 삭제에 실패했습니다. 다시 시도해주세요.');
+    },
+  });
+};

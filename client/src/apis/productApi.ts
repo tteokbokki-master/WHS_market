@@ -29,3 +29,17 @@ export const fetchProductByIdApi = async (id: number) => {
   const response = await instance.get(`/products/${id}`);
   return response.data as ProductResponse;
 };
+
+export const fetchMyProductsApi = async () => {
+  const response = await instance.get('/products/my-products', {
+    withCredentials: true,
+  });
+  return response.data as ProductResponse[];
+};
+
+export const deleteProductApi = async (id: number) => {
+  const response = await instance.delete(`/products/${id}`, {
+    withCredentials: true,
+  });
+  return response.data;
+};

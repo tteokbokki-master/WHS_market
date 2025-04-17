@@ -85,7 +85,15 @@ export default function CreateProduct() {
         </Field>
         <Field>
           <Label>이미지</Label>
-          <Input type="file" accept="image/*" {...register('image')} />
+          <Input
+            type="file"
+            accept="image/*"
+            {...register('image', {
+              required: '이미지를 업로드해주세요.',
+              validate: files => files.length > 0 || '이미지를 업로드해주세요.',
+            })}
+          />
+          {errors.image && <Error>{errors.image.message}</Error>}
           {imagePreview && <Preview src={imagePreview} alt="미리보기" />}
         </Field>
         <Button onClick={handleSubmit(onSubmit)}>상품 등록</Button>

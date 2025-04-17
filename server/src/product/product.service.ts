@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
@@ -69,5 +73,18 @@ export class ProductService {
     return this.productRepo.find({
       where: { user: { id: userId } },
     });
+  }
+
+  async deleteProduct(id: number, userId: number) {
+    const product = await this.productRepo.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+    if (!product) throw new NotFoundException('상품을 찾을 수 없습니다.');
+    if (product.user.id !== userId)
+      throw new ForbiddenException('삭제 권한이 없습니다.');
+
+    await this.productRepo.delete(id);
+    return { message: '상품이 삭제되었습니다.' };
   }
 }

@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   NotFoundException,
   UseInterceptors,
+  Delete,
 } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { diskStorage } from 'multer';
@@ -66,5 +67,14 @@ export class ProductController {
     const product = await this.productService.findOne(id);
     if (!product) throw new NotFoundException('해당 상품을 찾을 수 없습니다.');
     return product;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.productService.deleteProduct(id, req.user.sub);
   }
 }
