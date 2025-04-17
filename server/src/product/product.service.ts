@@ -13,6 +13,7 @@ export interface ProductDetailResponse {
   price: number;
   imageUrl: string;
   userId: number;
+  username: string;
 }
 
 @Injectable()
@@ -60,6 +61,7 @@ export class ProductService {
       price: product.price,
       imageUrl: product.imageUrl,
       userId: product.user.id,
+      username: product.user.username,
     };
   }
 }
