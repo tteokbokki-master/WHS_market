@@ -20,3 +20,13 @@ export const loginUserApi = async (data: { username: string; password: string })
 export const logoutUserApi = async () => {
   await instance.post('/auth/logout');
 };
+
+export const updatePasswordApi = async (newPassword: string) => {
+  const response = await instance.put('/auth/password', { newPassword });
+  return response.data;
+};
+
+export const updateIntroduceApi = async (introduce: string) => {
+  const response = await instance.put('/auth/introduce', { introduce });
+  return response.data;
+};

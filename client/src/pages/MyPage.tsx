@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
 import Button from '../Components/Common/Button';
+import { useUpdateIntroduce, useUpdatePassword } from '../hooks/useAuth';
 
 interface FormValues {
   introduce: string;
@@ -15,15 +16,16 @@ export default function Mypage() {
     getValues,
   } = useForm<FormValues>();
 
-  // 소개 수정 핸들러
+  const { mutate: updateIntroduce } = useUpdateIntroduce();
+  const { mutate: updatePassword } = useUpdatePassword();
+
   const onIntroduceSubmit = () => {
     const { introduce } = getValues();
-    const payload = { introduce };
-    console.log('소개 수정 요청:', payload);
+    updateIntroduce(introduce);
   };
 
   const onPasswordSubmit = handleSubmit(data => {
-    console.log('비밀번호 수정 요청:', data.password);
+    updatePassword(data.password);
   });
 
   return (

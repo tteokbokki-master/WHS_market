@@ -1,5 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { checkUsernameApi, registerUserApi, loginUserApi, logoutUserApi } from '../apis/authApi';
+import {
+  checkUsernameApi,
+  registerUserApi,
+  loginUserApi,
+  logoutUserApi,
+  updatePasswordApi,
+  updateIntroduceApi,
+} from '../apis/authApi';
 import { useNavigate } from 'react-router-dom';
 import instance from '../apis/instance';
 
@@ -75,4 +82,26 @@ export const useAuth = () =>
     staleTime: 1000 * 60 * 5,
     retry: false,
     refetchOnWindowFocus: false,
+  });
+
+export const useUpdatePassword = () =>
+  useMutation({
+    mutationFn: updatePasswordApi,
+    onSuccess: () => {
+      alert('비밀번호가 성공적으로 변경되었습니다.');
+    },
+    onError: () => {
+      alert('비밀번호 변경에 실패했습니다.');
+    },
+  });
+
+export const useUpdateIntroduce = () =>
+  useMutation({
+    mutationFn: updateIntroduceApi,
+    onSuccess: () => {
+      alert('자기소개가 성공적으로 변경되었습니다.');
+    },
+    onError: () => {
+      alert('자기소개 변경에 실패했습니다.');
+    },
   });
