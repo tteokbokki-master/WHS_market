@@ -85,4 +85,8 @@ export class AuthService {
 
     return user;
   }
+
+  async findUserById(id: number) {
+    return this.userRepo.findOneBy({ id });
+  }
 }

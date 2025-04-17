@@ -72,11 +72,12 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@UserDecorator() user: InfoMe) {
+  async getProfile(@UserDecorator() user: InfoMe) {
+    const found = await this.authService.findUserById(user.sub);
     return {
       id: user.sub,
       username: user.username,
-      introduce: user.introduce,
+      introduce: found?.introduce,
     };
   }
 

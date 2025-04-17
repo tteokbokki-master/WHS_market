@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
 import Button from '../Components/Common/Button';
 import { useUpdateIntroduce, useUpdatePassword } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 
 interface FormValues {
   introduce: string;
@@ -15,7 +16,7 @@ export default function Mypage() {
     formState: { errors },
     getValues,
   } = useForm<FormValues>();
-
+  const { data: user = '' } = useAuth();
   const { mutate: updateIntroduce } = useUpdateIntroduce();
   const { mutate: updatePassword } = useUpdatePassword();
 
@@ -37,7 +38,7 @@ export default function Mypage() {
       <Introduce>
         <SubTitle>소개</SubTitle>
         <InlineBox>
-          <FixedTextarea placeholder="여기에 본인 소개 내용을 입력하세요." {...register('introduce')} />
+          <FixedTextarea placeholder={user.introduce} {...register('introduce')} />
           <Button onClick={onIntroduceSubmit}>수정</Button>
         </InlineBox>
       </Introduce>
