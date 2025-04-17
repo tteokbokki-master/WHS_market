@@ -53,4 +53,52 @@ export class ChatService {
       order: { createdAt: 'ASC' },
     });
   }
+
+  async listRooms(
+    userAId: number,
+    productId: number,
+  ): Promise<
+    { userId: number; username: string; lastMessage: string; lastAt: Date }[]
+  > {
+    const userCase = `
+      CASE
+        WHEN chat.sender_id = :userA THEN chat.receiver_id
+        ELSE chat.sender_id
+      END
+    `;
+
+    const usernameCase = `
+      CASE
+        WHEN chat.sender_id = :userA THEN receiver.username
+        ELSE sender.username
+      END
+    `;
+
+    const qb = this.chatRepo
+      .createQueryBuilder('chat')
+      .select([
+        `${userCase} AS "userId"`,
+        `${usernameCase} AS "username"`,
+        'chat.message AS "lastMessage"',
+        'chat.created_at AS "lastAt"',
+      ])
+      .leftJoin('chat.sender', 'sender')
+      .leftJoin('chat.receiver', 'receiver')
+      .where('(chat.sender_id = :userA OR chat.receiver_id = :userA)', {
+        userA: userAId,
+      })
+      .andWhere('chat.product_id = :productId', { productId });
+
+    if (this.chatRepo.manager.connection.options.type === 'postgres') {
+      qb.distinctOn([userCase.trim()])
+
+        .orderBy(userCase.trim(), 'ASC')
+
+        .addOrderBy('chat.created_at', 'DESC');
+    } else {
+      qb.orderBy('chat.created_at', 'DESC');
+    }
+
+    return qb.getRawMany();
+  }
 }

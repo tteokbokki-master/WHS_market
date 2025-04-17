@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule, type TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { ChatGateway } from './chat/chat.gateway';
+import { GlobalChatGateway } from './chat/global-chat.gateway';
+import { PrivateChatGateway } from './chat/private-chat.gateway';
 import { ProductModule } from './product/product.module';
 import { ReportModule } from './report/report.module';
 import { ChatModule } from './user-chat/user-chat.module';
@@ -31,6 +32,6 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     ReportModule,
     ChatModule,
   ],
-  providers: [ChatGateway],
+  providers: [GlobalChatGateway, PrivateChatGateway],
 })
 export class AppModule {}

@@ -5,22 +5,43 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useProductDetail } from '../hooks/useProduct';
 import { useState } from 'react';
 import ReportModal from '../Components/ReportModal';
+import ChatSideBox from '../Components/ChatSideBox';
+import ChatRoomsList from '../Components/ChatRoomList';
+import { useAuth } from '../hooks/useAuth';
 
 export default function ProductPage() {
-  const { productId } = useParams();
+  const { productId } = useParams<{ productId: string }>();
+  const pid = Number(productId);
   const navigate = useNavigate();
-  const { data: item, isLoading, isError } = useProductDetail(Number(productId));
+  const { data: item, isLoading, isError } = useProductDetail(pid);
+  const { data: me } = useAuth();
   const [imgError, setImgError] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+
+  const [mode, setMode] = useState<'none' | 'rooms' | 'chat'>('none');
+  const [selectedRoom, setSelectedRoom] = useState<{ userId: number; username: string } | null>(null);
 
   if (isLoading) return <h1>불러오는 중...</h1>;
   if (isError || !item) return <h1>상품을 불러올 수 없습니다.</h1>;
 
-  const openReport = () => setIsReportOpen(true); // ✅ 열기
-  const closeReport = () => setIsReportOpen(false); // ✅ 닫기
+  const isOwner = me?.id === item.userId;
+  const roomId = `product-${pid}-user-${isOwner ? selectedRoom?.userId : me?.id}`;
+
+  const openReport = () => setIsReportOpen(true);
+  const closeReport = () => setIsReportOpen(false);
+
+  const openRooms = () => setMode('rooms');
+  const openChat = () => {
+    setSelectedRoom({ userId: item.userId, username: item.username });
+    setMode('chat');
+  };
+  const closeAll = () => {
+    setMode('none');
+    setSelectedRoom(null);
+  };
 
   return (
-    <Container>
+    <CustomContainer>
       <Inner>
         <HeaderRow>
           <BackButton onClick={() => navigate(-1)}>← 뒤로</BackButton>
@@ -56,8 +77,34 @@ export default function ProductPage() {
 
         <ButtonBar>
           <Button onClick={openReport}>불량유저 신고</Button>
-          <Button>1대1 채팅</Button>
+          {isOwner ? (
+            <Button onClick={openRooms}>채팅 목록 보기</Button>
+          ) : (
+            <Button onClick={openChat}>1대1 채팅</Button>
+          )}
         </ButtonBar>
+
+        {mode === 'rooms' && (
+          <ChatRoomsList
+            productId={pid}
+            onSelect={room => {
+              setSelectedRoom(room);
+              setMode('chat');
+            }}
+            onClose={closeAll}
+          />
+        )}
+
+        {mode === 'chat' && selectedRoom && (
+          <ChatSideBox
+            onClose={closeAll}
+            username={selectedRoom.username}
+            roomId={roomId}
+            receiverId={selectedRoom.userId}
+            productId={pid}
+          />
+        )}
+
         {isReportOpen && (
           <ReportModal
             onClose={closeReport}
@@ -67,15 +114,18 @@ export default function ProductPage() {
           />
         )}
       </Inner>
-    </Container>
+    </CustomContainer>
   );
 }
 
+const CustomContainer = styled(Container)``;
+
 const Inner = styled.div`
+  position: relative;
   width: 100%;
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   gap: 20px;
 `;
 
@@ -87,24 +137,16 @@ const HeaderRow = styled.div`
   border-bottom: 2px solid #ddd;
 `;
 
-const BackButton = styled.button`
+const BackButton = styled(Button)`
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
-  background: none;
-  border: none;
-  color: #3cb371;
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 const Title = styled.h1`
   text-align: center;
-  width: 100%;
   font-size: 24px;
   font-weight: bold;
 `;
@@ -126,12 +168,8 @@ const InfoRow = styled.div`
 
 const Label = styled.span`
   font-weight: bold;
-  color: #333;
 `;
-
-const Value = styled.span`
-  color: #555;
-`;
+const Value = styled.span``;
 
 const ButtonBar = styled.div`
   width: 100%;
@@ -163,5 +201,4 @@ const Fallback = styled.div`
   width: 100%;
   height: 100%;
   background-color: #f0f0f0;
-  position: relative;
 `;

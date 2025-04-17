@@ -2,9 +2,11 @@ import { useChat } from '../../hooks/useChat';
 import { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import Button from '../Common/Button';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function BroadCastBox() {
   const { messages, sendMessage } = useChat();
+  const { data: me } = useAuth();
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -27,11 +29,14 @@ export default function BroadCastBox() {
     <Wrapper>
       <Title>실시간 채팅</Title>
       <MessageArea>
-        {messages.map((msg, idx) => (
-          <Message key={idx}>
-            <strong>{msg.username}</strong>: {msg.message}
-          </Message>
-        ))}
+        {(messages || []).map((msg, idx) => {
+          const isMine = msg.username === me?.username;
+          return (
+            <Message key={idx} isMine={isMine}>
+              <strong>{msg.username}</strong>: {msg.message}
+            </Message>
+          );
+        })}
         <div ref={scrollRef} />
       </MessageArea>
 
@@ -59,18 +64,25 @@ const Wrapper = styled.div`
   }
 `;
 
+const Message = styled.div<{ isMine: boolean }>`
+  padding: 10px;
+  margin: 10px;
+  max-width: 80%;
+  border-radius: 8px;
+  background-color: ${({ isMine }) => (isMine ? '#3cb371' : '#f0f0f0')}; /* 녹색/회색 */
+  color: ${({ isMine }) => (isMine ? '#fff' : '#000')};
+  align-self: ${({ isMine }) => (isMine ? 'flex-end' : 'flex-start')}; /* 오른쪽/왼쪽 */
+  text-align: ${({ isMine }) => (isMine ? 'right' : 'left')};
+  word-break: break-word;
+`;
+
 const MessageArea = styled.div`
   border: 2px solid #ddd;
   border-radius: 4px;
   flex: 1;
   overflow-y: auto;
-`;
-
-const Message = styled.div`
-  padding: 10px 0 10px 10px;
-  border-bottom: 1px solid #ddd;
-  word-break: break-word;
-  font-size: 18px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const InputArea = styled.div`

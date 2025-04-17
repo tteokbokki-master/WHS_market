@@ -6,6 +6,7 @@ import {
   Req,
   Get,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { ChatService } from './user-chat.service';
@@ -23,6 +24,8 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() req: AuthenticatedRequest, @Body() dto: CreateChatDto) {
+    console.log('받은 요청 본문:', dto);
+    console.log('인증된 유저:', req.user);
     return this.chatService.create(req.user.sub, dto);
   }
 
@@ -38,5 +41,14 @@ export class ChatController {
       withUserId,
       productId,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('rooms')
+  async getChatRooms(
+    @Req() req: AuthenticatedRequest,
+    @Query('product', new ParseIntPipe()) productId: number,
+  ) {
+    return this.chatService.listRooms(req.user.sub, productId);
   }
 }

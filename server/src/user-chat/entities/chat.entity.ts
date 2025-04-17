@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../../auth/entities/user/user';
 import { Product } from '../../product/entities/product.entity';
@@ -14,17 +15,20 @@ export class Chat {
   id: number;
 
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'sender_id' })
   sender: User;
 
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'receiver_id' })
   receiver: User;
 
   @ManyToOne(() => Product)
+  @JoinColumn({ name: 'product_id' })
   product: Product;
 
   @Column('text')
   message: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
