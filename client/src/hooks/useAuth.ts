@@ -9,6 +9,7 @@ import {
 } from '../apis/authApi';
 import { useNavigate } from 'react-router-dom';
 import instance from '../apis/instance';
+import { AxiosError } from 'axios';
 
 export const useCheckUsername = () =>
   useMutation({
@@ -50,8 +51,9 @@ export const useLoginUser = () => {
       alert('로그인 성공!');
       navigate('/');
     },
-    onError: () => {
-      alert('로그인 실패. 아이디 또는 비밀번호를 확인하세요.');
+    onError: (error: AxiosError<{ message: string }>) => {
+      const errorMessage = error.response?.data?.message;
+      alert(errorMessage ?? '로그인 실패. 아이디 또는 비밀번호를 확인하세요.');
     },
   });
 };

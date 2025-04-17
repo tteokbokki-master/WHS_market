@@ -10,7 +10,9 @@ export default function AuthWatcher() {
   const isAuthRequired = !['/login', '/signup'].includes(location.pathname);
 
   useEffect(() => {
-    if (!isLoading && !data && isAuthRequired) {
+    const isBanned = data?.banUntil && new Date(data.banUntil) > new Date();
+
+    if (!isLoading && (!data || isBanned) && isAuthRequired) {
       navigate('/login');
     }
   }, [data, isLoading, isAuthRequired, navigate]);

@@ -6,6 +6,9 @@ import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
+  @Column({ type: 'timestamp', nullable: true })
+  banUntil: Date | null;
+
   @PrimaryGeneratedColumn()
   id: number;
 

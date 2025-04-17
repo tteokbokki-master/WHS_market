@@ -44,6 +44,23 @@ export class UserReportService {
       reported,
     });
 
+    const reportCount = await this.repo.count({
+      where: {
+        reported: { id: dto.reportedUserId },
+      },
+    });
+
+    if (reportCount >= 10) {
+      const user = await this.users.findOneBy({ id: dto.reportedUserId });
+      if (user && !user.banUntil) {
+        user.banUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.users.save(user);
+        await this.repo.delete({
+          reported: { id: dto.reportedUserId },
+        });
+      }
+    }
+
     await this.repo.save(entity);
     return 'REPORTED';
   }
