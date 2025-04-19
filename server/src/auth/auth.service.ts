@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { Wallet } from '../wallet/entities/wallet.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(Wallet) private readonly walletRepo: Repository<Wallet>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async isUsernameTaken(username: string): Promise<boolean> {
@@ -114,5 +116,37 @@ export class AuthService {
     });
 
     return users;
+  }
+
+  async createAdmin(dto: RegisterDto) {
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const user = this.userRepo.create({
+      ...dto,
+      password: hashed,
+      isAdmin: true,
+    });
+    return await this.userRepo.save(user);
+  }
+
+  async ensureAdminUser() {
+    const username = this.configService.get<string>('ADMIN_USERNAME');
+    const password = this.configService.get<string>('ADMIN_PASSWORD');
+
+    if (!username || !password) {
+      console.warn('관리자 계정 환경변수가 누락되었습니다.');
+      return;
+    }
+
+    const existing = await this.userRepo.findOne({ where: { username } });
+    if (!existing) {
+      const hashed = await bcrypt.hash(password, 10);
+      const admin = this.userRepo.create({
+        username,
+        password: hashed,
+        isAdmin: true,
+      });
+      await this.userRepo.save(admin);
+      console.log(`관리자 계정 생성됨 (username: ${username})`);
+    }
   }
 }

@@ -28,4 +28,7 @@ export class User {
 
   @OneToOne(() => Wallet, (wallet) => wallet.user, { cascade: true })
   wallet: Wallet;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 }
