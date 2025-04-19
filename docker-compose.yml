@@ -1,0 +1,29 @@
+services:
+  client:
+    build: ./client
+    ports:
+      - '51730:80'
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    ports:
+      - '3001:8080'
+    volumes:
+      - ./server/.env:/app/.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16.8
+    restart: always
+    ports:
+      - '65432:5432'
+    env_file:
+      - ./server/db.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
