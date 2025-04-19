@@ -123,4 +123,12 @@ export class AuthController {
   async getUserProfile(@Param('id', ParseIntPipe) id: number) {
     return this.authService.getPublicProfile(id);
   }
+  @Get('search')
+  async searchUser(@Query('q') query: string) {
+    if (!query || typeof query !== 'string') {
+      throw new BadRequestException('검색어를 입력해주세요.');
+    }
+
+    return this.authService.searchUsersByUsername(query);
+  }
 }

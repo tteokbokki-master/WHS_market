@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user/user';
@@ -102,5 +102,17 @@ export class AuthService {
 
   async findUserById(id: number) {
     return this.userRepo.findOneBy({ id });
+  }
+
+  async searchUsersByUsername(query: string) {
+    const users = await this.userRepo.find({
+      where: {
+        username: Like(`%${query}%`),
+      },
+      select: ['id', 'username', 'introduce'],
+      take: 10,
+    });
+
+    return users;
   }
 }
