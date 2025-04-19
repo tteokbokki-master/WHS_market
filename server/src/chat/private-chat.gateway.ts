@@ -16,7 +16,7 @@ interface JwtPayload {
 
 @WebSocketGateway({
   namespace: '/private',
-  cors: { origin: 'http://localhost:5173', credentials: true },
+  cors: { origin: 'http://localhost:51730', credentials: true },
 })
 export class PrivateChatGateway
   implements OnGatewayConnection, OnGatewayDisconnect

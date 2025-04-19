@@ -15,7 +15,7 @@ interface JwtPayload {
 
 @WebSocketGateway({
   namespace: '/global',
-  cors: { origin: 'http://localhost:5173', credentials: true },
+  cors: { origin: 'http://localhost:51730', credentials: true },
 })
 export class GlobalChatGateway
   implements OnGatewayConnection, OnGatewayDisconnect
