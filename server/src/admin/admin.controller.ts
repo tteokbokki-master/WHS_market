@@ -46,4 +46,24 @@ export class AdminController {
   deleteProduct(@Param('id', ParseIntPipe) id: number) {
     return this.adminService.removeProduct(id);
   }
+
+  @Get('reports/products')
+  getProductReports() {
+    return this.adminService.getAllProductReports();
+  }
+
+  @Get('reports/users')
+  getUserReports() {
+    return this.adminService.getAllUserReports();
+  }
+
+  @Delete('report/product/:id')
+  deleteProductReport(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.removeProductReport(id);
+  }
+
+  @Delete('report/user/:id')
+  deleteUserReport(@Param('id', ParseIntPipe) id: number) {
+    return this.adminService.removeUserReport(id);
+  }
 }
