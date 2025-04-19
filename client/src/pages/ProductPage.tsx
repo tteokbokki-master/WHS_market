@@ -46,14 +46,18 @@ export default function ProductPage() {
     <CustomContainer>
       <Inner>
         <HeaderRow>
-          <BackButton onClick={() => navigate(-1)}>← 뒤로</BackButton>
+          <BackButton onClick={() => navigate(-1)}>← 홈으로</BackButton>
           <Title>{item.title}</Title>
         </HeaderRow>
         <ImageWrapper>
           {imgError ? (
             <Fallback />
           ) : (
-            <Image src={`http://localhost:8080${item.imageUrl}`} alt={item.name} onError={() => setImgError(true)} />
+            <Image
+              src={`${import.meta.env.VITE_SERVER_URL}${item.imageUrl}`}
+              alt={item.name}
+              onError={() => setImgError(true)}
+            />
           )}
         </ImageWrapper>
         <InfoSection>
@@ -135,12 +139,20 @@ const HeaderRow = styled.div`
   border-bottom: 2px solid #ddd;
 `;
 
-const BackButton = styled(Button)`
+const BackButton = styled.p`
   position: absolute;
-  left: 0;
-  top: 50%;
+  left: 10px;
+  top: 30%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 1px solid 3cb371;
+  cursor: pointer;
+  text-decoration: none;
+  color: #3cb371;
+  &:hover {
+    color: #2e8b57;
+  }
 `;
 
 const Title = styled.h1`

@@ -12,7 +12,7 @@ export function useChat() {
 
   useEffect(() => {
     if (socketRef.current) return;
-    const socket = io('http://localhost:8080/global', {
+    const socket = io(`${import.meta.env.VITE_SERVER_URL}/global`, {
       withCredentials: true,
     });
 

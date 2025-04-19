@@ -5,7 +5,7 @@ export const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io('http://localhost:8080/private', {
+    const socket = io(`${import.meta.env.VITE_SERVER_URL}/private`, {
       withCredentials: true,
     });
 

@@ -24,7 +24,7 @@ export default function ProductItem({ product }: { product: ProductType }) {
       <ImageWrapper>
         {!imgLoaded && <Skeleton />}
         <Image
-          src={imgError ? '/no-image.png' : `http://localhost:8080${product.imageUrl}`}
+          src={imgError ? '/no-image.png' : `${import.meta.env.VITE_SERVER_URL}${product.imageUrl}`}
           alt={product.name}
           onError={() => setImgError(true)}
           onLoad={() => setImgLoaded(true)}
