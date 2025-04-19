@@ -3,13 +3,12 @@ import styled from '@emotion/styled';
 export default function Footer() {
   return (
     <Container>
-      <Title>WHS-3기-이용진</Title>
+      <Title>2025 WHS-3기 | Secure Coding 과제 | 36반 이용진</Title>
     </Container>
   );
 }
 
 const Container = styled.div`
-  margin-top: 30px;
   width: 70%;
   max-width: 1200px;
   height: 100px;
@@ -21,6 +20,9 @@ const Container = styled.div`
 `;
 
 const Title = styled.p`
-  font-size: 24px;
-  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+  color: #999;
+  padding: 16px 0;
+  margin-top: 40px;
 `;
