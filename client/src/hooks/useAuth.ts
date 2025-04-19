@@ -6,6 +6,7 @@ import {
   logoutUserApi,
   updatePasswordApi,
   updateIntroduceApi,
+  searchUsersApi,
 } from '../apis/authApi';
 import { useNavigate } from 'react-router-dom';
 import instance from '../apis/instance';
@@ -107,3 +108,12 @@ export const useUpdateIntroduce = () =>
       alert('자기소개 변경에 실패했습니다.');
     },
   });
+
+export const useSearchUsers = (query: string) => {
+  return useQuery({
+    queryKey: ['search-users', query],
+    queryFn: () => searchUsersApi(query),
+    enabled: !!query,
+    staleTime: 1000 * 60,
+  });
+};

@@ -30,3 +30,10 @@ export const updateIntroduceApi = async (introduce: string) => {
   const response = await instance.put('/auth/introduce', { introduce });
   return response.data;
 };
+
+export const searchUsersApi = async (query: string) => {
+  const response = await instance.get('/auth/search', {
+    params: { q: query },
+  });
+  return response.data;
+};

@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
 import Button from '../Components/Common/Button';
-import { useUpdateIntroduce, useUpdatePassword } from '../hooks/useAuth';
+import { useSearchUsers, useUpdateIntroduce, useUpdatePassword } from '../hooks/useAuth';
 import { useAuth } from '../hooks/useAuth';
 import { useDeleteProduct, useMyProducts } from '../hooks/useProduct';
 import { useNavigate } from 'react-router-dom';
 import { useWalletBalance } from '../hooks/useWallet';
+import { useState } from 'react';
 
 interface FormValues {
   introduce: string;
@@ -23,6 +24,15 @@ export default function Mypage() {
   const { data: user = '' } = useAuth();
   const { mutate: updateIntroduce } = useUpdateIntroduce();
   const { mutate: updatePassword } = useUpdatePassword();
+
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [submittedKeyword, setSubmittedKeyword] = useState('');
+  const { data: searchedUsers = [] } = useSearchUsers(submittedKeyword);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittedKeyword(searchKeyword.trim());
+  };
 
   const onIntroduceSubmit = () => {
     const { introduce } = getValues();
@@ -58,7 +68,9 @@ export default function Mypage() {
         {myProducts.map(product => (
           <ProductItem key={product.id} onClick={() => nav(`/product/${product.id}`)}>
             <P1>{product.title}</P1>
-            <SmallButton onClick={e => handleDelete(e, product.id)}>삭제</SmallButton>
+            <SmallButton type="button" onClick={e => handleDelete(e, product.id)}>
+              삭제
+            </SmallButton>
           </ProductItem>
         ))}
       </ProductSection>
@@ -89,6 +101,25 @@ export default function Mypage() {
         </InlineBox>
         {typeof errors.password?.message === 'string' && <ErrorText>{errors.password.message}</ErrorText>}
       </PwChange>
+
+      <SearchSection>
+        <SubTitle>유저 검색</SubTitle>
+        <SearchBox>
+          <Input placeholder="닉네임으로 검색" value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)} />
+          <Button onClick={handleSearchSubmit}>검색</Button>
+        </SearchBox>
+      </SearchSection>
+
+      {searchedUsers.length > 0 && (
+        <UserListSection>
+          {searchedUsers.map((user: { id: number; username: string; introduce?: string }) => (
+            <UserItem key={user.id}>
+              <P1>{user.username}</P1>
+              <Intro>{user.introduce || '소개가 없습니다.'}</Intro>
+            </UserItem>
+          ))}
+        </UserListSection>
+      )}
     </MypageContainer>
   );
 }
@@ -224,4 +255,38 @@ const Balance = styled.p`
   font-size: 18px;
   font-weight: bold;
   color: #3cb371;
+`;
+
+const SearchSection = styled.div`
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-top: 20px;
+`;
+
+const SearchBox = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const UserListSection = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const UserItem = styled.div`
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+`;
+
+const Intro = styled.p`
+  margin-top: 6px;
+  color: #555;
+  font-size: 14px;
 `;
