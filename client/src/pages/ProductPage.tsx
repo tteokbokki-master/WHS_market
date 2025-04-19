@@ -41,7 +41,7 @@ export default function ProductPage() {
     setMode('none');
     setSelectedRoom(null);
   };
-  console.log(selectedRoom);
+
   return (
     <CustomContainer>
       <Inner>

@@ -123,7 +123,7 @@ export default function Mypage() {
     </MypageContainer>
   );
 }
-const MypageContainer = styled.form`
+const MypageContainer = styled.div`
   width: 100%;
   gap: 10px;
   display: flex;
