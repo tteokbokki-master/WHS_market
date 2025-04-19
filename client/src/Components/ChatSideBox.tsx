@@ -28,6 +28,12 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
   const [isTransferMode, setIsTransferMode] = useState(false);
   const [transferAmount, setTransferAmount] = useState('');
 
+  const otherUserId = history?.[0]
+    ? history[0].sender.id !== me?.id
+      ? history[0].sender.id
+      : history[0].receiver.id
+    : receiverId;
+
   useEffect(() => {
     if (!socketRef.current) return;
 
@@ -54,11 +60,11 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
     socketRef.current.emit('private_message', {
       roomId,
       message: input,
-      receiverId,
+      receiverId: otherUserId,
       productId,
     });
 
-    mutate({ receiverId, productId, message: input });
+    mutate({ receiverId: otherUserId, productId, message: input });
     setInput('');
   };
 
@@ -70,7 +76,7 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
     }
 
     transferMoney(
-      { receiverId, amount },
+      { toUserId: Number(otherUserId), amount: Number(transferAmount) },
       {
         onSuccess: () => {
           alert(`${amount}원이 ${username}님에게 송금되었습니다.`);
@@ -86,7 +92,7 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
               productId,
             });
           }
-          mutate({ receiverId, productId, message });
+          mutate({ receiverId: otherUserId, productId, message });
         },
         onError: (error: Error) => {
           if (error instanceof AxiosError && error.response?.data?.message) {
@@ -98,7 +104,6 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
       }
     );
   };
-
   return (
     <Wrapper>
       <Header>
@@ -120,7 +125,7 @@ export default function ChatSideBox({ onClose, username, roomId, receiverId, pro
       </ChatBody>
 
       <TopBar>
-        <Balance>잔액: {wallet.balance.toLocaleString()}원</Balance>
+        <Balance>잔액: {(wallet?.balance ?? 0).toLocaleString()}원</Balance>
         <Button onClick={() => setIsTransferMode(prev => !prev)}>송금</Button>
       </TopBar>
 

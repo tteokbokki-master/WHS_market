@@ -1,7 +1,7 @@
 import instance from './instance';
 
 export interface TransferPayload {
-  receiverId: number;
+  toUserId: number;
   amount: number;
 }
 

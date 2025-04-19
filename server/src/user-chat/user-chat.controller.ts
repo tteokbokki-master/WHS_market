@@ -24,8 +24,6 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() req: AuthenticatedRequest, @Body() dto: CreateChatDto) {
-    console.log('받은 요청 본문:', dto);
-    console.log('인증된 유저:', req.user);
     return this.chatService.create(req.user.sub, dto);
   }
 

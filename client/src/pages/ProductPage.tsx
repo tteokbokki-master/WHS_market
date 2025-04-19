@@ -41,7 +41,7 @@ export default function ProductPage() {
     setMode('none');
     setSelectedRoom(null);
   };
-
+  console.log(selectedRoom);
   return (
     <CustomContainer>
       <Inner>
@@ -56,7 +56,6 @@ export default function ProductPage() {
             <Image src={`http://localhost:8080${item.imageUrl}`} alt={item.name} onError={() => setImgError(true)} />
           )}
         </ImageWrapper>
-
         <InfoSection>
           <InfoRow>
             <Label>작성자</Label>
@@ -98,6 +97,7 @@ export default function ProductPage() {
             onClose={closeAll}
           />
         )}
+
         {mode === 'chat' && selectedRoom && (
           <ChatSideBox
             onClose={closeAll}

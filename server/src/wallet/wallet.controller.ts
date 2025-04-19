@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { Request } from 'express';
+import { TransferDto } from './dto/transfer.dto';
 
 interface AuthenticatedRequest extends Request {
   user: { sub: number };
@@ -18,14 +19,7 @@ export class WalletController {
   }
 
   @Post('transfer')
-  transfer(
-    @Req() req: AuthenticatedRequest,
-    @Body() body: { toUserId: number; amount: number },
-  ) {
-    return this.walletService.transfer(
-      req.user.sub,
-      body.toUserId,
-      body.amount,
-    );
+  transfer(@Req() req: AuthenticatedRequest, @Body() dto: TransferDto) {
+    return this.walletService.transfer(req.user.sub, dto.toUserId, dto.amount);
   }
 }
