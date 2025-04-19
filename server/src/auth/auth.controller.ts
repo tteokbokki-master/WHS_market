@@ -78,6 +78,7 @@ export class AuthController {
       id: user.sub,
       username: user.username,
       introduce: found?.introduce,
+      isAdmin: found?.isAdmin,
     };
   }
 

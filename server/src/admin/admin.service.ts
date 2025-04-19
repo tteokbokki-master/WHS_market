@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user/user';
 import { Product } from 'src/product/entities/product.entity';
 
@@ -13,18 +13,24 @@ export class AdminService {
     private readonly productRepo: Repository<Product>,
   ) {}
 
-  async findAllUsers() {
+  async findAllUsersExcept(adminId: number) {
     return this.userRepo.find({
-      select: ['id', 'username', 'introduce', 'banUntil', 'isAdmin'],
+      where: {
+        id: Not(adminId),
+      },
+      select: ['id', 'username', 'introduce', 'banUntil'],
     });
   }
 
   async updateUser(
     id: number,
-    update: { introduce?: string; banUntil?: string },
+    update: { introduce?: string; banUntil?: string; username?: string },
   ) {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
+    if (update.username !== undefined) {
+      user.username = update.username;
+    }
 
     if (update.introduce !== undefined) user.introduce = update.introduce;
     if (update.banUntil !== undefined)

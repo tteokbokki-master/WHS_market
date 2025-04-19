@@ -7,6 +7,7 @@ import {
   Patch,
   Body,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { AdminGuard } from './guard/admin.guard';
@@ -18,14 +19,15 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('users')
-  getAllUsers() {
-    return this.adminService.findAllUsers();
+  getAllUsers(@Req() req: any) {
+    return this.adminService.findAllUsersExcept(req.user.sub);
   }
 
   @Patch('users/:id')
   updateUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() update: { introduce?: string; banUntil?: string },
+    @Body()
+    update: { introduce?: string; banUntil?: string; username?: string },
   ) {
     return this.adminService.updateUser(id, update);
   }
