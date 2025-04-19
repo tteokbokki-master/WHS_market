@@ -6,6 +6,10 @@ import {
   useDeleteUser,
   useDeleteProductByAdmin,
   useUpdateUser,
+  useUserReports,
+  useProductReports,
+  useDeleteUserReport,
+  useDeleteProductReport,
 } from '../hooks/useAdmin';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -26,6 +30,13 @@ export default function AdminPage() {
   const { mutate: deleteProduct } = useDeleteProductByAdmin();
   const { mutate: deleteUser } = useDeleteUser();
   const { mutate: updateUser } = useUpdateUser();
+  const { data: userReports = [] } = useUserReports();
+  const { data: productReports = [] } = useProductReports();
+  const { mutate: deleteUserReport } = useDeleteUserReport();
+  const { mutate: deleteProductReport } = useDeleteProductReport();
+
+  console.log(productReports);
+  console.log(userReports);
 
   const [userInputs, setUserInputs] = useState<
     Record<number, { username: string; introduce: string; banUntil: string }>
@@ -66,6 +77,17 @@ export default function AdminPage() {
         onSuccess: () => refetchUsers(),
       }
     );
+  };
+  const handleDeleteUserReport = (id: number) => {
+    if (confirm('정말 이 유저 신고를 삭제하시겠습니까?')) {
+      deleteUserReport(id);
+    }
+  };
+
+  const handleDeleteProductReport = (id: number) => {
+    if (confirm('정말 이 상품 신고를 삭제하시겠습니까?')) {
+      deleteProductReport(id);
+    }
   };
 
   return (
@@ -134,6 +156,45 @@ export default function AdminPage() {
           </UserItem>
         ))}
       </UserSection>
+
+      <UserSection>
+        <SubTitle>유저 신고 목록</SubTitle>
+        {userReports.map(report => (
+          <UserItem key={report.id}>
+            <P1>신고자: {report.reporter?.username}</P1>
+            <P1>피신고자: {report.reported?.username}</P1>
+            <P1>사유: {report.content}</P1>
+            <P1>날짜: {dayjs(report.createdAt).format('YYYY-MM-DD HH:mm')}</P1>
+            <ReportButtonBox>
+              <SmallButton type="button" onClick={() => handleDeleteUserReport(report.id)}>
+                삭제
+              </SmallButton>
+            </ReportButtonBox>
+          </UserItem>
+        ))}
+      </UserSection>
+
+      <ProductSection>
+        <SubTitle>상품 신고 목록</SubTitle>
+        {productReports.map(report => (
+          <UserItem key={report.id}>
+            <P1>신고자: {report.reporter?.username}</P1>
+            <P1
+              style={{ color: '#3cb371', cursor: 'pointer', textDecoration: 'underline' }}
+              onClick={() => nav(`/product/${report.product.id}`)}
+            >
+              상품 ID: {report.product.id}
+            </P1>
+            <P1>사유: {report.content}</P1>
+            <P1>날짜: {dayjs(report.createdAt).format('YYYY-MM-DD HH:mm')}</P1>
+            <ReportButtonBox>
+              <SmallButton type="button" onClick={() => handleDeleteProductReport(report.id)}>
+                삭제
+              </SmallButton>
+            </ReportButtonBox>
+          </UserItem>
+        ))}
+      </ProductSection>
     </MypageContainer>
   );
 }
@@ -249,6 +310,11 @@ const ButtonBox = styled.div`
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+`;
+
+const ReportButtonBox = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 const Input = styled.input`

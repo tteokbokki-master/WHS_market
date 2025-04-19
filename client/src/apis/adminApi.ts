@@ -24,3 +24,23 @@ export const deleteProduct = async (id: number) => {
   const res = await instance.delete(`/admin/products/${id}`);
   return res.data;
 };
+
+export const getAllUserReports = async () => {
+  const res = await instance.get('/admin/reports/users');
+  return res.data;
+};
+
+export const getAllProductReports = async () => {
+  const res = await instance.get('/admin/reports/products');
+  return res.data;
+};
+
+export const deleteProductReport = async (id: number) => {
+  const res = await instance.delete(`/admin/report/product/${id}`);
+  return res.data;
+};
+
+export const deleteUserReport = async (id: number) => {
+  const res = await instance.delete(`/admin/report/user/${id}`);
+  return res.data;
+};
